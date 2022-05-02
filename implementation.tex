@@ -1,1 +1,36 @@
 \section{Implementation}\label{sec:implementation}
+
+For implementing the SigNet, 3 resources were used.
+The SigNet paper was consulted, which describes the model completely\cite{sig_net}.
+The Keras code presumably by one of the paper authors was used for clarification\cite{GitHub_sounakdey}.
+Lastly, an existing PyTorch implementation of SigNet was used as a starting place\cite{GitHub_signet_pytorch}.
+
+The existing PyTorch implementation first restructured into a Jupyter Notebook.
+Then, it was checked against the specification of the network in the paper.
+The existing training process did not implement data normalization, so this was implemented as per the paper.
+The mean and standard deviation of the images in the training dataset was computed (after spliting the images in the CEDAR dataset into training and validation images and pairing images).
+For efficiency, all of the images in the dataset were then resized, transformed (inverted), and normalized according the paper's description and then saved back into png files.
+
+Unfortunately, it was later discovered that the last layer of the network was incorrect in the existing implementation and this went unnoticed.
+The Signet implementation in this paper has [last layer output size is 256 instead of 128].
+% would training go faster if this was fixed?
+
+The process of preparing the data is all the same.
+While the paper uses several datasets, this paper only uses the CEDAR dataset due to time constraints [ref].
+% todo: ref
+
+Another small disrepency is in the initialization of model weights.
+% todo
+% I'm not sure if the biases were correctly initialized to 0 or if the other weights were initialized with the same strategy...
+
+Training was done on Google Colab (using the \_ level tier thing).
+The training process took approximately 1 hour per 1000 [cases/datapoints].
+The training process was changed to use a dataloader that stores all of the image data in computer memory instead of repeatedly accessing the information from disk in the form of PNG files.
+This is feasible because the number of images is far fewer than the number of pairs of images (which are used as [cases/datapoints]).
+Unfortunately, this did not seem to speed up the training process significantly.
+
+The model was trained for approximately \_ hours and then evaluated, yeilding an accuracy of 72\%.
+Then, it was trained until the end of the first epoch (another \_ hours) and evaluated [validated?] again.
+
+Although the paper trains the model for 20 epochs, training was stopped at 1 epoch due to time constraints.
+(Unfortuantely weights from a trained SigNet model could not be obtained.)

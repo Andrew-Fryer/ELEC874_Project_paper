@@ -10,10 +10,12 @@ Then, it was checked against the specification of the network in the paper.
 The existing training process did not implement data normalization, so this was implemented as per the paper.
 The mean and standard deviation of the images in the training dataset was computed (after spliting the images in the CEDAR dataset into training and validation images and pairing images).
 For efficiency, all of the images in the dataset were then resized, transformed (inverted), and normalized according the paper's description and then saved back into png files.
+[I didn't save the image data to disk as a .pt file (as a tensor) because I figured that png compression is probably better than the .pt compression since it is image-specific.]
 
 Unfortunately, it was later discovered that the last layer of the network was incorrect in the existing implementation and this went unnoticed.
 The Signet implementation in this paper has [last layer output size is 256 instead of 128].
 % would training go faster if this was fixed?
+% I could also try to use the trained incorrect model to initialize the correct model...
 
 The process of preparing the data is all the same.
 While the paper uses several datasets, this paper only uses the CEDAR dataset due to time constraints [ref].
@@ -29,9 +31,14 @@ The training process was changed to use a dataloader that stores all of the imag
 This is feasible because the number of images is far fewer than the number of pairs of images (which are used as [cases/datapoints]).
 Unfortunately, this did not seem to speed up the training process significantly.
 
-The model was trained for approximately \_ hours and then evaluated, yeilding an accuracy of 72\%.
+The model was trained for approximately \_ hours [until batch 19050] and then evaluated, yeilding an accuracy of 72\%.
 Then, it was trained until the end of the first epoch (another \_ hours) and evaluated [validated?] again.
 This time the accuracy was 94\%.
 
 Although the paper trains the model for 20 epochs, training was stopped at 1 epoch due to time constraints and because 94\% accuracy seemed sufficient for the puposes of this paper.
 (Unfortuantely weights from a trained SigNet model could not be obtained.)
+
+% \section{Expirements}
+The code in the repo presumably by the SigNet paper author computes accuracy given a thrsehold that is determined by taking the threshold that gives the best accuracy on the validation set.
+IMHO, this is wrong because the threshold is information that is technically part of the classifier that is being leaked from the validation set.
+See: \url{https://github.com/sounakdey/SigNet/blob/master/SigNet_v1.py#L84}

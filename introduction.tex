@@ -6,6 +6,12 @@ Handwritten signatures have been used for verifying people's identity for a long
 
 Face verification from images is an old problem.
 
+``Offline signature verification is one of the most challenging tasks in biometrics and document forensics. Unlike other verification problems, it needs to model minute but critical details between genuine
+and forged signatures, because a skilled falsification might only differ from a real signature by some
+specific kinds of deformation. This verification task is even harder in writer independent scenarios
+which is undeniably fiscal for realistic cases. In this paper, we model an offline writer independent
+signature verification task with a convolutional Siamese network.''\cite{sig_net}
+
 This could be done by training a CNN to output whether or not the input image is of the chosen person.
 However, this requires a new network to be trained for each person that the system needs to perform verification for.
 Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires a large number of images of the person's face for training.

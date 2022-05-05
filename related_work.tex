@@ -69,7 +69,7 @@ You could train a classifier and then take an intermediate layer to be a latent 
 PCA can improve this, but an end-to-end network performs better.
 \cite{face_net}
 
-`` The networks are trained by using a combination of classification and verification loss. The verification
+``The networks are trained by using a combination of classification and verification loss. The verification
 loss is similar to the triplet loss we employ [12, 19], in that it
 minimizes the L2-distance between faces of the same identity and enforces a margin between the distance of faces of
 different identities. The main difference is that only pairs of
@@ -86,8 +86,14 @@ identities.''
 When training, they don't use true negatives to adjust weights because the network already knows they are different and so the direction of the gradient is somewhat arbitrary...
 [Maybe I should try that...]
 They just use a cut off threshold for computing accuracy.
-Part of the results of their paper is that they comclude that using 256-bit over 128-bit latent vectos doesn't really improve accuracy.
+I couldn't find how they chose the threshold...
+Part of the results of their paper is that they conclude that using 256-bit over 128-bit latent vectos doesn't really improve accuracy.
 
+\subseciton{asdf}
+this paper (where FaceNet got triplet loss...) allows datapoints with the same label to live in multiple clusters:
+https://proceedings.neurips.cc/paper/2005/file/a7f592cef8b130a6967a90617db5681b-Paper.pdf
+Does FaceNet allow a subject/person to live in several clusters?
+The FaceNet paper suggests that each person lives in a single cluster (they imply that and their verifyication strategy is just a distance threshold...)
 
 \subsection{SigNet}
 SigNet was largely inspired by the success of FaceNet.

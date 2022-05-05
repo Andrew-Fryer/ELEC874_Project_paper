@@ -1,6 +1,6 @@
 \section{Related Work}\label{sec:related_work}
 
-\subsection{Before CNNs}
+\subsection{Before CNNs} % todo: rename
 ``Handwriting was developed a long time ago as a means to expand human memory and to facilitate communication''\cite{handwriting_survey}.
 ``Handwriting is a skill that is personal to individuals''\cite{handwriting_survey}.
 
@@ -45,6 +45,18 @@ networks that share the same set of weights - a Siamese Architecture''
 \end{figure}
 I think LeCun proposed Contrastive Loss...\cite{LeCun}.
 [Note: the partitioning and pairing of images is the same idea as SigNet.]
+They did this on images of faces.
+
+``A model is constructed of each subject by calculating the mean feature
+vector and the variance-covariance matrix using the feature
+vectors generated from the first five images of each subject.
+The likelihood that a test image is genuine, $p_genuine$, is
+found by evaluating the normal density of the test image on
+the model of the concerned subject. The likelihood of a test
+image being an impostor, $p_imposter$, is assumed to be a constant whose value is estimated by calculating the average $p_genuine$ value of all the impostor images of the concerned
+subject. The probability that the given image is genuine is
+given by P = $p_genuine$ / ($p_genuine$ + $p_imposter$)''
+...so basically they assume that subjects/signers occupy a normal region in the latent space.
 
 \subsection{Triplet Loss}
 ``FaceNet directly trains
@@ -57,8 +69,29 @@ You could train a classifier and then take an intermediate layer to be a latent 
 PCA can improve this, but an end-to-end network performs better.
 \cite{face_net}
 
+`` The networks are trained by using a combination of classification and verification loss. The verification
+loss is similar to the triplet loss we employ [12, 19], in that it
+minimizes the L2-distance between faces of the same identity and enforces a margin between the distance of faces of
+different identities. The main difference is that only pairs of
+images are compared, whereas the triplet loss encourages a
+relative distance constraint.''
+``Although we did not directly compare to other losses,
+e.g. the one using pairs of positives and negatives, as used
+in [14] Eq. (2), we believe that the triplet loss is more suitable for face verification. The motivation is that the loss
+from [14] encourages all faces of one identity to be projected onto a single point in the embedding space. The
+triplet loss, however, tries to enforce a margin between each
+pair of faces from one person to all other faces. This allows the faces for one identity to live on a manifold, while
+still enforcing the distance and thus discriminability to other
+identities.''
+When training, they don't use true negatives to adjust weights because the network already knows they are different and so the direction of the gradient is somewhat arbitrary...
+[Maybe I should try that...]
+They just use a cut off threshold for computing accuracy.
+Part of the results of their paper is that they comclude that using 256-bit over 128-bit latent vectos doesn't really improve accuracy.
+
+
 \subsection{SigNet}
 SigNet was largely inspired by the success of FaceNet.
+I haven't seen the SigNet paper discuss why they didn't use triplet loss...
 
 Yo, why does SigNet use contrastive loss instead of triplet loss?
     My guess is that Contrastive Loss is just easier to implement...

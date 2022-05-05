@@ -53,10 +53,19 @@ See: \url{https://github.com/sounakdey/SigNet/blob/master/SigNet_v1.py#L84}
 This approach is useful for understanding the potential of SigNet, but does not give an accuracy evaluation of the accuracy that SigNet would have in the real world because of this information leakage.
 
 
-I should compute the divide as p_same / (p_same + p_different) where each p is computed as the gaussian distribution of the distances on the training data...
+I should compute the divide as $p_same / (p_same + p_different)$ where each p is computed as the gaussian distribution of the distances on the training data...
 
 !!! I don't think that SigNet implements the decision (genuine vs. forge) correctly !!!
-It treats all dimensions with equal weight, whereas LeCun computes the mean and cov_mat of several genuine images and then computes p based on a gaussian/normal assumption.
+It treats all dimensions with equal weight, whereas LeCun computes the mean and cov mat of several genuine images and then computes p based on a gaussian/normal assumption.
 Yeah, SigNet just finds a threshold distance and uses that... (which naively weights all dimensions equally)
 
 I think that what I should implement (also) is compute the mean and covariance (matices) of the genuine and forge data latent vectors over a bunch of training pairs. (To compute variance, I might need to store the latent vectors in CPU RAM and free the GPU RAM to avoid GPU OOM.)
+I can also compute the confusion matrix using the simple threshold distance and my thing and discuss the performance differences.
+
+Maybe I should also try what LeCun did with computing normal distribution for an individual and then using inverse FGSM (aka gradient descent on the input... could I use Pytorch optimizer and stuff for choosing a step value???)
+
+If I transfer the latent vectors to the CPU (and don't include the gradients!), then I can easily store the latent vectors for all of the training images!
+(should be 128 floats for each, but FaceNet paper says we can compress to 128 bytes ``without loss of accuracy'' ... but they don't say how exactly...)
+Then, I could compute the covariances of the clusters and also do some analytics on understanding the clusters.
+
+Implementing triplet loss for SigNet would be another whole paper I think.

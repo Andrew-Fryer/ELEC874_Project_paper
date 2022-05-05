@@ -20,4 +20,10 @@ Instead, a high-level representation of the image can be found that includes onl
 This is effectively dimensionality reduction that preserves only the information that is important for identifying people.
 The high-level representation is a vector in what is reffered to as a latent space.
 (So, the dimensionality reduction should preserve/extract the structure of the person's face while discarding information about the background and the lighting conditions.)
-Then, 
+Then,
+
+``The existence of adversarial examples suggests that being able to
+explain the training data or even being able to correctly label the test data does not imply that our
+models truly understand the tasks we have asked them to perform. Instead, their linear responses are
+overly confident at points that do not occur in the data distribution, and these confident predictions
+are often highly incorrect''\cite{goodfellow}.

@@ -131,4 +131,22 @@ Yo, why does SigNet use contrastive loss instead of triplet loss?
 \subsection{DEFENSE-GAN}
 
 \subsection{FGSM}
+Ian Goodfellow (famous for his development of GANs) proves in this paper (https://arxiv.org/pdf/1412.6572.pdf) that even linear models are susceptable to avasarial attacks consisting of minute pertubations if their dimensionality is large enough.
 
+``Here out epsilon of .007 corresponds to the magnitude of the
+smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers.''
+[Basically, I'll use the same epsilon value...]
+They also should that training on adversarial inputs improves the model's accuracy on adversarial inputs (making it less sussecptible to the FGSM attack).
+
+`` However, noise
+with zero mean and zero covariance is very inefficient at preventing adversarial examples. The
+expected dot product between any reference vector and such a noise vector is zero. This means that
+in many cases the noise will have essentially no effect rather than yielding a more difficult input.''
+...this means that adding my noise shouldn't really fool SigNet.
+
+They also discuss ``whether it is better to perturb the input or the hidden layers or both''
+
+Not related but interesting: don't perturb the last hidden layer because there arne't any hidden layers in between it and the output layer to fix the pertebatioons (using  universal approximator theorem)
+
+``An intriguing aspect of adversarial examples is that an example generated for one model is often
+misclassified by other models, even when they have different architecures or were trained on disjoint training sets.''

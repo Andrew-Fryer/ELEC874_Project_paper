@@ -1,5 +1,9 @@
 \section{Implementation}\label{sec:implementation}
 
+Take Signet.
+Attack it using a technique similar to FGSM.
+[Try to improve SigNet's resilience to the attack.]
+
 For implementing the SigNet, 3 resources were used.
 The SigNet paper was consulted, which describes the model completely\cite{sig_net}.
 The Keras code presumably by one of the paper authors was used for clarification\cite{GitHub_sounakdey}.
@@ -30,6 +34,8 @@ The training process took approximately 1 hour per 1000 [cases/datapoints].
 The training process was changed to use a dataloader that stores all of the image data in computer memory instead of repeatedly accessing the information from disk in the form of PNG files.
 This is feasible because the number of images is far fewer than the number of pairs of images (which are used as [cases/datapoints]).
 Unfortunately, this did not seem to speed up the training process significantly.
+
+I should try increasing the batch size!!!!
 
 The model was trained for approximately \_ hours [until batch 19050] and then evaluated, yeilding an accuracy of 72\%.
 Then, it was trained until the end of the first epoch (another \_ hours) and evaluated [validated?] again.

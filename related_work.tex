@@ -1,11 +1,72 @@
 \section{Related Work}\label{sec:related_work}
 
-\subsection{asdf}
-classical technique for sig ver
+\subsection{Before CNNs}
+``Handwriting was developed a long time ago as a means to expand human memory and to facilitate communication''\cite{handwriting_survey}.
+``Handwriting is a skill that is personal to individuals''\cite{handwriting_survey}.
 
-\subsection{FaceNet}
+``in numerous situations, a pen together with paper or a small notepad is more convenient that a keyboard''\cite{handwriting_survey}.
+Early research in to machine recognition of handwriting was motiviated by the desire to allow humans to write conveniently and then parse that writing into data inside of a computer.
+On-line: 2-D coordinates as a function of time. (captured by electronic device)
+Off-line: image. (usually captured using paper)
+\cite{handwriting_survey}
+As of [year], on-line handwriting recognition was more accurate than off-line recognition because the extra information is useful.
+``recognition rates reported are much highter for the on-line case in comparison with the off-line case''
+Personal Digital Assistants (PDAs) use on-line systems have been used widely commercially.
+These techniques worked like so...
+    Structural and rule-based methods, statistical methods, implicit methods (artificiall neural networks)
+    Hidden Markov Model process
+One of these techniques used a CNN and HMM\cite{389575}.
+This work was built off of LeCun's early work on CNNs.
+None of these methods have been accurate enough to be used commercially on cursive writing.
+However, off-line handwriting recognition is much more broadly applicable because it does not require a special device to capture the handwriting.
+Only a camera is needed to capture an image of the writing.
+There have been several attempts made to recreate the temporal data from an image, but these have not been very successful.\cite{handwriting_survey}.
+
+``Handwriting interpretation is the task of determining the meaning of a body of handwriting''\cite{handwriting_survey}.
+``Handwriting identification is the the task of determining the autor of a sample of handwriting form a set of writers, assuming that each person's handwriting is individualistic. Signature verificiation is the task of determining whether or not the signature is that of a given person''\cite{handwriting_survey}.
+Verfication attempts to extract the writer-specific information from a signature ``irrespective of its handwritten content''.
+A bank might require an error of 1/ 100,000. ``Current systems are sill several orders of magnitude away''.
+
+\subsection{MNIST/LeCun}
+In 1998, LeCun famously tackled the problem of off-line handwritten digit recognition using [i think a new technique] convolutional neural networks\cite{mnist}.
+
+
+\subsection{Contrastive Loss}
+``The idea of mapping face images to low dimensional target spaces before comparison has a long history''
+``Our approach is to build a trainable system that nonlinearly maps the raw images of faces to points in a low dimensional space so that the distance between these points is
+small if the images belong to the same person and large otherwise. Learning the similarity metric is realized by training a network that consists of two identical convolutional
+networks that share the same set of weights - a Siamese Architecture''
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{siamese_architecture.png}
+    \end{center}
+    \caption{Siamese Architecture. (LeCun 2005)}
+    \label{fig:siamese}
+\end{figure}
+I think LeCun proposed Contrastive Loss...\cite{LeCun}.
+
+\subsection{Triplet Loss}
+``FaceNet directly trains
+its output to be a compact 128-D embedding using a triplet-based loss function based on LMNN [19]. Our triplets consist of two matching face thumbnails and a non-matching
+face thumbnail and the loss aims to separate the positive pair
+from the negative by a distance margin. The thumbnails are
+tight crops of the face area, no 2D or 3D alignment, other
+than scale and translation is performed.''
+You could train a classifier and then take an intermediate layer to be a latent space, but this doesn't perform as well...
+PCA can improve this, but an end-to-end network performs better.
+\cite{face_net}
+
+\subsection{SigNet}
+SigNet was largely inspired by the success of FaceNet.
+
+Yo, why does SigNet use contrastive loss instead of triplet loss?
+    My guess is that Contrastive Loss is just easier to implement...
+\cite{sig_net}
+\cite{GitHub_sounakdey}
+...and in python: \cite{GitHub_signet_pytorch}
 
 \subsection{DeepFool}
 \subsection{DEFENSE-GAN}
 
 \subsection{FGSM}
+

@@ -1,2 +1,17 @@
 \section{Introduction}\label{sec:introduction}
+
+Verfying people's identity (I think it is call authentication in security circles...) is a difficult problem...
+
 Handwritten signatures have been used for verifying people's identity for a long time.
+
+Face verification from images is an old problem.
+
+This could be done by training a CNN to output whether or not the input image is of the chosen person.
+However, this requires a new network to be trained for each person that the system needs to perform verification for.
+Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires a large number of images of the person's face for training.
+
+Instead, a high-level representation of the image can be found that includes only the information needed to distinguish people.
+This is effectively dimensionality reduction that preserves only the information that is important for identifying people.
+The high-level representation is a vector in what is reffered to as a latent space.
+(So, the dimensionality reduction should preserve/extract the structure of the person's face while discarding information about the background and the lighting conditions.)
+Then, 

@@ -67,5 +67,6 @@ Maybe I should also try what LeCun did with computing normal distribution for an
 If I transfer the latent vectors to the CPU (and don't include the gradients!), then I can easily store the latent vectors for all of the training images!
 (should be 128 floats for each, but FaceNet paper says we can compress to 128 bytes ``without loss of accuracy'' ... but they don't say how exactly...)
 Then, I could compute the covariances of the clusters and also do some analytics on understanding the clusters.
+Yeah, memoizing the latent vectors when doing validation (and finding a threshold(s)) is a really good idea!
 
 Implementing triplet loss for SigNet would be another whole paper I think.

@@ -96,6 +96,28 @@ Does FaceNet allow a subject/person to live in several clusters?
 The FaceNet paper suggests that each person lives in a single cluster (they imply that and their verifyication strategy is just a distance threshold...)
 
 \subsection{SigNet}
+``Unlike conventional approaches that assign
+binary similarity labels to pairs, Siamese network aims to bring
+the output feature vectors closer for input pairs that are labelled
+as similar, and push the feature vectors away if the input pairs
+are dissimilar.''
+Uses Contrastive Loss (from LeCun).
+Uses 128-bit latent vectors inspired by FaceNet.
+
+``We initialize the weights of the model according to the work
+of Glorot and Bengio [20], and the biases equal to 0. We trained
+the model using RMSprop for 20 epochs, using momentum rate
+equal to 0.9, and mini batch size equal to 128.''
+
+In the paper, SigNet achieves 100\% accuracy on the CEDAR dataset, which contains 
+In the validation process, SigNet takes an image and outputs a latent vector.
+First, a genuine signature is sent through the network.
+Then, either another genuine or a forge is sent throught the network.
+The resulting latent vectors are compared using Euclidean distance.
+[have I described partitioning yet?]
+After computing the latent vector distances for all image pairs in the validation set, the threshold that results in the best accuracy is picked.
+This results in 100\% accuracy on the CEDAR dataset.
+
 SigNet was largely inspired by the success of FaceNet.
 I haven't seen the SigNet paper discuss why they didn't use triplet loss...
 

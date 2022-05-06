@@ -3,12 +3,14 @@
 \subsection{General Strategy}
 Signature verification could be done by training a CNN to output whether or not the input image is of the chosen person.
 However, this requires a new network to be trained for each person that the system needs to perform verification for.
-Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires a large number of images of the person's face for training.
+Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires many signatures by the person for training.
 
 Instead, a high-level representation of the image can be found that includes only the information needed to distinguish people.
 This is effectively dimensionality reduction that preserves only the information that is important for identifying people.
 The high-level representation is a vector in what is reffered to as a latent space.
 (So, the dimensionality reduction should preserve/extract the structure of the person's face while discarding information about the background and the lighting conditions.)
+
+This idea has a long history for face verification\cite{LeCun}, and has been used for signature verfication much more recently\cite{sig_net}.
 
 \subsection{Handwriting Recognition} % remove if I'm out of space...
 ``In numerous situations, a pen together with paper or a small notepad is more convenient that a keyboard''\cite{handwriting_survey}.
@@ -26,15 +28,9 @@ As of 2000, on-line handwriting recognition was more accurate than off-line reco
 % Only a camera is needed to capture an image of the writing.
 There have been several attempts made to recreate the temporal data from an image, but these have not been very successful\cite{handwriting_survey}.
 
-
 % A bank might require an error of 1/ 100,000. ``Current systems are sill several orders of magnitude away''.
 
-\subsection{MNIST/LeCun}
-In 1998, LeCun famously tackled the problem of off-line handwritten digit recognition using convolutional neural networks\cite{mnist}.
-
-
 \subsection{Contrastive Loss}
-``The idea of mapping face images to low dimensional target spaces before comparison has a long history''
 ``Our approach is to build a trainable system that nonlinearly maps the raw images of faces to points in a low dimensional space so that the distance between these points is
 small if the images belong to the same person and large otherwise. Learning the similarity metric is realized by training a network that consists of two identical convolutional
 networks that share the same set of weights - a Siamese Architecture''
@@ -61,6 +57,12 @@ given by P = $p_genuine$ / ($p_genuine$ + $p_imposter$)''
 ...so basically they assume that subjects/signers occupy a normal region in the latent space.
 
 \subsection{Triplet Loss}
+this paper (where FaceNet got triplet loss...) allows datapoints with the same label to live in multiple clusters:
+https://proceedings.neurips.cc/paper/2005/file/a7f592cef8b130a6967a90617db5681b-Paper.pdf
+Does FaceNet allow a subject/person to live in several clusters?
+The FaceNet paper suggests that each person lives in a single cluster (they imply that and their verifyication strategy is just a distance threshold...)
+
+\subsection{FaceNet}
 ``FaceNet directly trains
 its output to be a compact 128-D embedding using a triplet-based loss function based on LMNN [19]. Our triplets consist of two matching face thumbnails and a non-matching
 face thumbnail and the loss aims to separate the positive pair
@@ -90,12 +92,6 @@ When training, they don't use true negatives to adjust weights because the netwo
 They just use a cut off threshold for computing accuracy.
 I couldn't find how they chose the threshold...
 Part of the results of their paper is that they conclude that using 256-bit over 128-bit latent vectos doesn't really improve accuracy.
-
-\subsection{asdf}
-this paper (where FaceNet got triplet loss...) allows datapoints with the same label to live in multiple clusters:
-https://proceedings.neurips.cc/paper/2005/file/a7f592cef8b130a6967a90617db5681b-Paper.pdf
-Does FaceNet allow a subject/person to live in several clusters?
-The FaceNet paper suggests that each person lives in a single cluster (they imply that and their verifyication strategy is just a distance threshold...)
 
 \subsection{SigNet}
 ``Unlike conventional approaches that assign

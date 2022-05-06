@@ -1,5 +1,15 @@
 \section{Related Work}\label{sec:related_work}
 
+Signature verification could be done by training a CNN to output whether or not the input image is of the chosen person.
+However, this requires a new network to be trained for each person that the system needs to perform verification for.
+Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires a large number of images of the person's face for training.
+
+Instead, a high-level representation of the image can be found that includes only the information needed to distinguish people.
+This is effectively dimensionality reduction that preserves only the information that is important for identifying people.
+The high-level representation is a vector in what is reffered to as a latent space.
+(So, the dimensionality reduction should preserve/extract the structure of the person's face while discarding information about the background and the lighting conditions.)
+Then,
+
 \subsection{Before CNNs} % todo: rename
 ``Handwriting was developed a long time ago as a means to expand human memory and to facilitate communication''\cite{handwriting_survey}.
 ``Handwriting is a skill that is personal to individuals''\cite{handwriting_survey}.
@@ -126,6 +136,9 @@ Yo, why does SigNet use contrastive loss instead of triplet loss?
 \cite{sig_net}
 \cite{GitHub_sounakdey}
 ...and in python: \cite{GitHub_signet_pytorch}
+
+``In this paper, we model an offline writer independent
+signature verification task with a convolutional Siamese network.''\cite{sig_net}
 
 \subsection{DeepFool}
 \subsection{DEFENSE-GAN}

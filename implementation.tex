@@ -74,3 +74,11 @@ Implementing triplet loss for SigNet would be another whole paper I think.
 ``Here out epsilon of .007 corresponds to the magnitude of the
 smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers.''\cite{goodfellow}
 [Basically, I'll use the same epsilon value...]
+
+I didn't do the weight initialization the same way (because I didn't do it the first time and I didn't have time to re-run stuff...)
+
+
+AAAAAAAAAAAAAAAAHHHHHHHHHHHHH I'm an idiot!!!!
+The reason it was going so slowly is that I was saving my model state so frequently and it is like 1.4 GB going over the network :|
+\^wrong
+I believe the reason is actually that SigNet256 is almost twice the size of SigNet128.

@@ -75,16 +75,13 @@ Instead of computing Gaussian distributions, a simple distance threshold is used
 They just use a cut off threshold for computing accuracy.
 
 The FaceNet creators also conclude from their expirements that using latent vectors larger than 128 dimensions does not result in significant improvements in model accuracy\cite{FaceNet}.
+% say thing about being able to compress to 128 bytes?
 
 
 \subsection{SigNet}
 
 SigNet is a siamese network similar to FaceNet that performs handwritten siganture verification.
-
-Similar to LeCun and FaceNet.
-Uses Contrastive Loss (from LeCun).
-Uses 128-bit latent vectors inspired by FaceNet.
-
+It uses contrastive loss and 128-dimensional latent vectors.
 
 In the validation process, SigNet takes an image and outputs a latent vector.
 First, a genuine signature is sent through the network.

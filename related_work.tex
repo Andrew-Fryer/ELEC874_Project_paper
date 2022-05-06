@@ -1,6 +1,8 @@
 \section{Related Work}\label{sec:related_work}
 
+
 \subsection{General Strategy}
+
 Signature verification could be done by training a Convolutional Neural Network (CNN) to output whether or not the input image is of the chosen person.
 However, this requires a new network to be trained for each person that the system needs to perform verification for.
 Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires many signatures by the person for training.
@@ -12,7 +14,9 @@ The high-level representation is a vector in what is reffered to as a latent spa
 
 This idea has a long history for face verification\cite{LeCun}, and has been used for signature verfication much more recently\cite{sig_net}.
 
+
 \subsection{Handwriting Recognition} % remove if I'm out of space...
+
 ``In numerous situations, a pen together with paper or a small notepad is more convenient that a keyboard''\cite{handwriting_survey}.
 Early research in automated recognition of handwriting was motiviated by the desire to allow humans to write conveniently and then parse that writing into data inside of a computer.
 
@@ -30,7 +34,9 @@ There have been several attempts made to recreate the temporal data from an imag
 
 % A bank might require an error of 1/ 100,000. ``Current systems are sill several orders of magnitude away''.
 
+
 \subsection{Contrastive Loss}\label{sec:contrastive_loss}
+
 In 2005, Yann LeCun co-authored a paper that describes a technique for face verification.
 It maps ``images of faces to points in a low dimensional space so that the distance between these points is small if the images belong to the same person and large otherwise''\cite{LeCun}.
 
@@ -52,7 +58,9 @@ The distribution of the latent vectors for images of each person is assumed to b
 This distrubution is computed for each person using the first five images of them.
 Verfication on a new image is performed by comparing the probabilities of that the image's latent vector is genuine vs. an impostor given the Gaussian distributions\cite{LeCun}.
 
+
 \subsection{FaceNet and Triplet Loss} % remove this if I run out of space
+
 FaceNet (\cite{triple_loss}) presents ``triplet loss'' an alternative to contrastive loss that allows datapoints with the same label to happily live in multiple clusters.
 While training with contrastive loss operates on pairs of images, triplet loss uses two matching images and one impostor, and ``encourages a relative distance constraint''\cite{face_net}.
 
@@ -68,45 +76,30 @@ They just use a cut off threshold for computing accuracy.
 
 The FaceNet creators also conclude from their expirements that using latent vectors larger than 128 dimensions does not result in significant improvements in model accuracy\cite{FaceNet}.
 
+
 \subsection{SigNet}
-``Unlike conventional approaches that assign
-binary similarity labels to pairs, Siamese network aims to bring
-the output feature vectors closer for input pairs that are labelled
-as similar, and push the feature vectors away if the input pairs
-are dissimilar.''
+
+SigNet is a siamese network similar to FaceNet that performs handwritten siganture verification.
+
+Similar to LeCun and FaceNet.
 Uses Contrastive Loss (from LeCun).
 Uses 128-bit latent vectors inspired by FaceNet.
 
-``We initialize the weights of the model according to the work
-of Glorot and Bengio [20], and the biases equal to 0. We trained
-the model using RMSprop for 20 epochs, using momentum rate
-equal to 0.9, and mini batch size equal to 128.''
 
-In the paper, SigNet achieves 100\% accuracy on the CEDAR dataset, which contains 
 In the validation process, SigNet takes an image and outputs a latent vector.
 First, a genuine signature is sent through the network.
 Then, either another genuine or a forge is sent throught the network.
 The resulting latent vectors are compared using Euclidean distance.
-[have I described partitioning yet?]
+% [have I described partitioning yet?]
 After computing the latent vector distances for all image pairs in the validation set, the threshold that results in the best accuracy is picked.
-This results in 100\% accuracy on the CEDAR dataset.
+This results in 100\% accuracy on the CEDAR dataset, which contains skilled forges.
 
-SigNet was largely inspired by the success of FaceNet.
-I haven't seen the SigNet paper discuss why they didn't use triplet loss...
+The SigNet paper does not explain the decision to use contrastive loss over triplet loss.
+Since signature verfication is simpler than face verification (and SigNet was trained for far less time than FaceNet), is seems that contrastive loss was used because it is much simpler to implement and has fewer hyper-paramters.
 
-Yo, why does SigNet use contrastive loss instead of triplet loss?
-    My guess is that Contrastive Loss is just easier to implement...
-\cite{sig_net}
-\cite{GitHub_sounakdey}
-...and in python: \cite{GitHub_signet_pytorch}
-
-``In this paper, we model an offline writer independent
-signature verification task with a convolutional Siamese network.''\cite{sig_net}
-
-\subsection{DeepFool}
-\subsection{DEFENSE-GAN}
 
 \subsection{FGSM}
+
 Ian Goodfellow (famous for his development of GANs) proves in this paper (https://arxiv.org/pdf/1412.6572.pdf) that even linear models are susceptable to avasarial attacks consisting of minute pertubations if their dimensionality is large enough.
 
 ``Here out epsilon of .007 corresponds to the magnitude of the

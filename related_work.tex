@@ -74,7 +74,7 @@ Instead of computing Gaussian distributions, a simple distance threshold is used
 (The paper does not seem to explain how the threshold is computed.)
 They just use a cut off threshold for computing accuracy.
 
-The FaceNet creators also conclude from their expirements that using latent vectors larger than 128 dimensions does not result in significant improvements in model accuracy\cite{FaceNet}.
+The FaceNet creators also conclude from their expirements that using latent vectors larger than 128 dimensions does not result in significant improvements in model accuracy\cite{face_net}.
 % say thing about being able to compress to 128 bytes?
 
 
@@ -97,22 +97,30 @@ Since signature verfication is simpler than face verification (and SigNet was tr
 
 \subsection{FGSM}
 
-Ian Goodfellow (famous for his development of GANs) proves in this paper (https://arxiv.org/pdf/1412.6572.pdf) that even linear models are susceptable to avasarial attacks consisting of minute pertubations if their dimensionality is large enough.
+It is established that state-of-the-art deep neural networks are unstable to small, well sought, perturbations of their inputs\cite{deep_fool}.
 
-``Here out epsilon of .007 corresponds to the magnitude of the
-smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers.''
-[Basically, I'll use the same epsilon value...]
-They also should that training on adversarial inputs improves the model's accuracy on adversarial inputs (making it less sussecptible to the FGSM attack).
+Ian Goodfellow (famous for his development of GANs) has proven that even linear models are susceptable to adversarial attacks consisting of minute pertubations if their dimensionality is large enough\cite{goodfellow}.
 
-`` However, noise
-with zero mean and zero covariance is very inefficient at preventing adversarial examples. The
-expected dot product between any reference vector and such a noise vector is zero. This means that
-in many cases the noise will have essentially no effect rather than yielding a more difficult input.''
-...this means that adding my noise shouldn't really fool SigNet.
+This is interesting in the topic of signature verfication because aversarial attacks could pose a security threat if such verification systems were used in the future.
 
-They also discuss ``whether it is better to perturb the input or the hidden layers or both''
+Fast Gradient Sign Method (FGSM) is a technique for generating adversarial inputs for models.
+An existing input is sent through the model and then the gradient of the model's output is taken with respect to the input.
+The input is then preturbed in the opposite direction of the gradient by some distance epsilon.
+This produces a new (preturbed) input that is very similar to the original, but produces a very different output.
 
-Not related but interesting: don't perturb the last hidden layer because there arne't any hidden layers in between it and the output layer to fix the pertebatioons (using  universal approximator theorem)
+They also show that training on adversarial inputs improves the model's accuracy on adversarial inputs (making it less sussecptible to the FGSM attack).
 
 ``An intriguing aspect of adversarial examples is that an example generated for one model is often
-misclassified by other models, even when they have different architecures or were trained on disjoint training sets.''
+misclassified by other models, even when they have different architecures or were trained on disjoint training sets''\cite{goodfellow}.
+% The paper also says that adversarial examples generalize to different instances and even different models... (it is really the direction of the pertebation that matters).
+
+If a signature verfication system were used (for cheques for example), an attacker could use FGSM without gaining access to the model or probing it.
+If they have access to a similar training set to that used for training the system under attack, they could train their own model and find pertebations using FGSM on their model.
+
+% `` However, noise
+% with zero mean and zero covariance is very inefficient at preventing adversarial examples. The
+% expected dot product between any reference vector and such a noise vector is zero. This means that
+% in many cases the noise will have essentially no effect rather than yielding a more difficult input.''
+% ...this means that adding my noise shouldn't really fool SigNet.
+
+% [If I decide to do the test on different latent vector sizes, I definitely want to mention what Goodfellow says about higher dimensional spaces being the reason for pertebations allowing for FGSM attacks!]

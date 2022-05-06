@@ -31,6 +31,9 @@ For efficiency, all of the images in the dataset were then resized, transformed 
 %     -store a training and validation list of triples (ind_into_img_list, ind2, y/n)
 % This way, we only read the images from disk at the beginning, so it should be a lot faster.
 
+Only training on CEDAR due to time constraints
+(Perhaps we'd get better accuracy if we trained on several datasets and validated on just CEDAR... did the SigNet paper do that?)
+
 
 Unfortunately, it was later discovered that the last layer of the network was incorrect in the existing implementation and this went unnoticed.
 The Signet implementation in this paper has [last layer output size is 256 instead of 128].
@@ -42,6 +45,10 @@ While the paper uses several datasets, this paper only uses the CEDAR dataset du
 % todo: ref
 
 Another small disrepency is in the initialization of model weights.
+``We initialize the weights of the model according to the work
+of Glorot and Bengio [20], and the biases equal to 0. We trained
+the model using RMSprop for 20 epochs, using momentum rate
+equal to 0.9, and mini batch size equal to 128.'' <- SigNet
 % todo
 % I'm not sure if the biases were correctly initialized to 0 or if the other weights were initialized with the same strategy...
 

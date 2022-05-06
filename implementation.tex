@@ -1,10 +1,15 @@
 \section{Implementation}\label{sec:implementation}
 
+
+\subsection{General Strategy}
+% todo: move related work section here and integrate
+
 Take Signet.
 Attack it using a technique similar to FGSM.
 [Try to improve SigNet's resilience to the attack.]
 
-% TODO: divide this into subsections
+
+\subsection{Procedure and Workarounds}
 
 For implementing the SigNet, 3 resources were used.
 The SigNet paper was consulted, which describes the model completely\cite{sig_net}.
@@ -46,7 +51,16 @@ This time the accuracy was 94\%.
 Although the paper trains the model for 20 epochs, training was stopped at 1 epoch due to time constraints and because 94\% accuracy seemed sufficient for the puposes of this paper.
 (Unfortuantely weights from a trained SigNet model could not be obtained.)
 
-% \section{Expirements}
+I didn't do the weight initialization the same way (because I didn't do it the first time and I didn't have time to re-run stuff...)
+
+It was decided not to implement triplet loss for SigNet because it would be substantial work and it seems that it would take far too long to train.
+
+
+\subsection{Expirements}
+
+[I] seek to validate the model as if it were used in a live production signature verification system, understand how effective a white-box attack would be, and understand how latent vector size would impact the accuracy and robustness of the system.
+
+\subsubsection{Threshold Strategy}
 The code in the repo presumably by the SigNet paper author computes accuracy given a thrsehold that is determined by taking the threshold that gives the best accuracy on the validation set.
 IMHO, this is wrong because the threshold is information that is technically part of the classifier that is being leaked from the validation set.
 See: \url{https://github.com/sounakdey/SigNet/blob/master/SigNet_v1.py#L84}
@@ -62,23 +76,48 @@ Yeah, SigNet just finds a threshold distance and uses that... (which naively wei
 I think that what I should implement (also) is compute the mean and covariance (matices) of the genuine and forge data latent vectors over a bunch of training pairs. (To compute variance, I might need to store the latent vectors in CPU RAM and free the GPU RAM to avoid GPU OOM.)
 I can also compute the confusion matrix using the simple threshold distance and my thing and discuss the performance differences.
 
-Maybe I should also try what LeCun did with computing normal distribution for an individual and then using inverse FGSM (aka gradient descent on the input... could I use Pytorch optimizer and stuff for choosing a step value???)
+Maybe I should also try what LeCun did with computing normal distribution for an individual and then using inverse FGSM (aka gradient descent on the input... could I use Pytorch optimizer and stuff for choosing a step value??? no!, don't bother)
 
 If I transfer the latent vectors to the CPU (and don't include the gradients!), then I can easily store the latent vectors for all of the training images!
 (should be 128 floats for each, but FaceNet paper says we can compress to 128 bytes ``without loss of accuracy'' ... but they don't say how exactly...)
 Then, I could compute the covariances of the clusters and also do some analytics on understanding the clusters.
 Yeah, memoizing the latent vectors when doing validation (and finding a threshold(s)) is a really good idea!
 
-Implementing triplet loss for SigNet would be another whole paper I think.
-
+\subsubsection{FGSM Attack}
 ``Here out epsilon of .007 corresponds to the magnitude of the
 smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers.''\cite{goodfellow}
 [Basically, I'll use the same epsilon value...]
 
-I didn't do the weight initialization the same way (because I didn't do it the first time and I didn't have time to re-run stuff...)
+\subsubsection{Latent Vector Size}
+From Goodfellow's work, I think it might make sense to try playing with latent vector size...?
+Trained on 64, 128, and 256.
+The model sizes are: \_, \_, and \_.
+Training was way faster for the smaller models of course, but suprisingly so.
+1000 per hour vs. \_ vs. \_...
+
+Training loss suggests that none of the models overfit.
+
+smaller models more accuracate after one epoch, but also have many fewer parameters, so this could just mean that they are very underfit (we only did one epoch because training is so slow).
+Training is very slow for SigNet256.
+(I should introduce the names "SigNet64,128,256" earlier.)
+[I should also stick all 3 models in one notebook and attach a name to the models to compute the save\_file str.]
+
+I will use the same epsilon value for all the tests because Goodfellow says that it is the direction that matters and I want them to be apples to apples.
+
+All of the confusion matrices can be seen in section {sec:results}.
+
+% maybe talk about playing with noise too if I actually get around to doing that properly...
 
 
-AAAAAAAAAAAAAAAAHHHHHHHHHHHHH I'm an idiot!!!!
-The reason it was going so slowly is that I was saving my model state so frequently and it is like 1.4 GB going over the network :|
-\^wrong
-I believe the reason is actually that SigNet256 is almost twice the size of SigNet128.
+\section{just notes lol}
+I want to compute my metric of thresholds and prove hopefully prove that results in better accuracy than just optimizing the threshold (by trying all distances) on the training data.
+I want to compute a confusion matrix for the 3 models and then recompute it after applying pertebations.
+
+If I have time, I'll also train SigNet128 until it has similar validation loss to that of SigNet64 and then recompute the confusion matrices (and confusion matrices after pertebation).
+
+Hey, does DeepFool do what I'm talking about?
+    I should give it another glance before implementing...
+
+With any luck, I'll have results that say which latent vector size is best for accuracy and robustenss to FGSM-like attacks.
+!!! Crap!, I think Goodfellow was talking about the input data being high dimensional, not the output.. !!!
+    \^check this...

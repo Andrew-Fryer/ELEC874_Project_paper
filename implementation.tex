@@ -53,10 +53,10 @@ See: \url{https://github.com/sounakdey/SigNet/blob/master/SigNet_v1.py#L84}
 This approach is useful for understanding the potential of SigNet, but does not give an accuracy evaluation of the accuracy that SigNet would have in the real world because of this information leakage.
 
 
-I should compute the divide as $p_same / (p_same + p_different)$ where each p is computed as the gaussian distribution of the distances on the training data...
+I should compute the divide as $p_same / (p_same + p_different)$ where each p is computed as the Gaussian distribution of the distances on the training data...
 
 !!! I don't think that SigNet implements the decision (genuine vs. forge) correctly !!!
-It treats all dimensions with equal weight, whereas LeCun computes the mean and cov mat of several genuine images and then computes p based on a gaussian/normal assumption.
+It treats all dimensions with equal weight, whereas LeCun computes the mean and cov mat of several genuine images and then computes p based on a Gaussian assumption.
 Yeah, SigNet just finds a threshold distance and uses that... (which naively weights all dimensions equally)
 
 I think that what I should implement (also) is compute the mean and covariance (matices) of the genuine and forge data latent vectors over a bunch of training pairs. (To compute variance, I might need to store the latent vectors in CPU RAM and free the GPU RAM to avoid GPU OOM.)

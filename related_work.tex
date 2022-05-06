@@ -1,7 +1,7 @@
 \section{Related Work}\label{sec:related_work}
 
 \subsection{General Strategy}
-Signature verification could be done by training a CNN to output whether or not the input image is of the chosen person.
+Signature verification could be done by training a Convolutional Neural Network (CNN) to output whether or not the input image is of the chosen person.
 However, this requires a new network to be trained for each person that the system needs to perform verification for.
 Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires many signatures by the person for training.
 
@@ -20,7 +20,7 @@ Early research in automated recognition of handwriting was motiviated by the des
 ``Off-line'' systems only need images of the handwriting, so they are more broadly applicable\cite{handwriting_survey}.
 
 Personal Digital Assistants (PDAs) incorporating on-line systems have been widely used commercially.
-These systems have used rule-based, statistical, and implicit methods\cite{handwriting_survey}, espeacially Hidden Markov Models and even convolutional neural networks\cite{389575} (while LeCun's work was in its early stages\cite{mnist}).
+These systems have used rule-based, statistical, and implicit methods\cite{handwriting_survey}, espeacially Hidden Markov Models and even convolutional neural networks\cite{389575} (while Yann LeCun's work was in its early stages\cite{mnist}).
 
 None of these methods have been accurate enough to be used commercially on cursive writing\cite{handwriting_survey}.
 As of 2000, on-line handwriting recognition was more accurate than off-line recognition because the chronological information is useful\cite{handwriting_survey}.
@@ -30,10 +30,15 @@ There have been several attempts made to recreate the temporal data from an imag
 
 % A bank might require an error of 1/ 100,000. ``Current systems are sill several orders of magnitude away''.
 
-\subsection{Contrastive Loss}
-``Our approach is to build a trainable system that nonlinearly maps the raw images of faces to points in a low dimensional space so that the distance between these points is
-small if the images belong to the same person and large otherwise. Learning the similarity metric is realized by training a network that consists of two identical convolutional
-networks that share the same set of weights - a Siamese Architecture''
+\subsection{Contrastive Loss}\label{sec:contrastive_loss}
+In 2005, Yann LeCun co-authored a paper that describes a technique for face verification.
+It maps ``images of faces to points in a low dimensional space so that the distance between these points is small if the images belong to the same person and large otherwise''\cite{LeCun}.
+
+% This can be done by training a classifier and then interpreting an intermediate layer to be a latent space, but this doesn't perform very well, even after performing principal component analysis on the output\cite{face_net}.
+
+As seen in figure \ref{fig:siamese}, two identical CNNs (called siamese networks) that share weights both map images to the low dimensional (latent) space.
+A ``contrastive loss'' function is then used to train the siamese networks.
+This loss function penalizes distance between genuine pairs and encourages distance between impostor pairs (those where the images are of different people)\cite{LeCun}.
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{siamese_architecture.png}
@@ -41,57 +46,27 @@ networks that share the same set of weights - a Siamese Architecture''
     \caption{Siamese Architecture. (LeCun 2005)}
     \label{fig:siamese}
 \end{figure}
-I think LeCun proposed Contrastive Loss...\cite{LeCun}.
-[Note: the partitioning and pairing of images is the same idea as SigNet.]
-They did this on images of faces.
+% [Note: the partitioning and pairing of images is the same idea as SigNet.]
 
-``A model is constructed of each subject by calculating the mean feature
-vector and the variance-covariance matrix using the feature
-vectors generated from the first five images of each subject.
-The likelihood that a test image is genuine, $p_genuine$, is
-found by evaluating the normal density of the test image on
-the model of the concerned subject. The likelihood of a test
-image being an impostor, $p_imposter$, is assumed to be a constant whose value is estimated by calculating the average $p_genuine$ value of all the impostor images of the concerned
-subject. The probability that the given image is genuine is
-given by P = $p_genuine$ / ($p_genuine$ + $p_imposter$)''
-...so basically they assume that subjects/signers occupy a normal region in the latent space.
+The distribution of the latent vectors for images of each person is assumed to be Gaussian.
+This distrubution is computed for each person using the first five images of them.
+Verfication on a new image is performed by comparing the probabilities of that the image's latent vector is genuine vs. an impostor given the Gaussian distributions\cite{LeCun}.
 
-\subsection{Triplet Loss}
-this paper (where FaceNet got triplet loss...) allows datapoints with the same label to live in multiple clusters:
-https://proceedings.neurips.cc/paper/2005/file/a7f592cef8b130a6967a90617db5681b-Paper.pdf
-Does FaceNet allow a subject/person to live in several clusters?
-The FaceNet paper suggests that each person lives in a single cluster (they imply that and their verifyication strategy is just a distance threshold...)
+\subsection{FaceNet and Triplet Loss} % remove this if I run out of space
+FaceNet (\cite{triple_loss}) presents ``triplet loss'' an alternative to contrastive loss that allows datapoints with the same label to happily live in multiple clusters.
+While training with contrastive loss operates on pairs of images, triplet loss uses two matching images and one impostor, and ``encourages a relative distance constraint''\cite{face_net}.
 
-\subsection{FaceNet}
-``FaceNet directly trains
-its output to be a compact 128-D embedding using a triplet-based loss function based on LMNN [19]. Our triplets consist of two matching face thumbnails and a non-matching
-face thumbnail and the loss aims to separate the positive pair
-from the negative by a distance margin. The thumbnails are
-tight crops of the face area, no 2D or 3D alignment, other
-than scale and translation is performed.''
-You could train a classifier and then take an intermediate layer to be a latent space, but this doesn't perform as well...
-PCA can improve this, but an end-to-end network performs better.
-\cite{face_net}
+Using this loss function, FaceNet was built off of LeCun's work (discussed in section \ref{sec:contrastive_loss}) and achieved very impressive results\cite{face_net}.
+Altough FaceNet does aim for each person's latent vectors to be in one cluster, the creators ``believe that the triplet loss is more suitable for face verification'' because it allows images of one person to live on a manifold rather than being confined to a point in the latent space\cite{face_net}.
 
-``The networks are trained by using a combination of classification and verification loss. The verification
-loss is similar to the triplet loss we employ [12, 19], in that it
-minimizes the L2-distance between faces of the same identity and enforces a margin between the distance of faces of
-different identities. The main difference is that only pairs of
-images are compared, whereas the triplet loss encourages a
-relative distance constraint.''
-``Although we did not directly compare to other losses,
-e.g. the one using pairs of positives and negatives, as used
-in [14] Eq. (2), we believe that the triplet loss is more suitable for face verification. The motivation is that the loss
-from [14] encourages all faces of one identity to be projected onto a single point in the embedding space. The
-triplet loss, however, tries to enforce a margin between each
-pair of faces from one person to all other faces. This allows the faces for one identity to live on a manifold, while
-still enforcing the distance and thus discriminability to other
-identities.''
-When training, they don't use true negatives to adjust weights because the network already knows they are different and so the direction of the gradient is somewhat arbitrary...
-[Maybe I should try that...]
+There are several other, more subtle differences between FaceNet and LeCun's work in 2005.
+FaceNet does not consider true negatives when training because the network already knows the images are of different people, so it is not productive to adjust the weight of the network as the direction of the gradient is somewhat arbitrary.
+% [Maybe I should try that...]
+Instead of computing Gaussian distributions, a simple distance threshold is used for deciding if two latent vectors match.
+(The paper does not seem to explain how the threshold is computed.)
 They just use a cut off threshold for computing accuracy.
-I couldn't find how they chose the threshold...
-Part of the results of their paper is that they conclude that using 256-bit over 128-bit latent vectos doesn't really improve accuracy.
+
+The FaceNet creators also conclude from their expirements that using latent vectors larger than 128 dimensions does not result in significant improvements in model accuracy\cite{FaceNet}.
 
 \subsection{SigNet}
 ``Unlike conventional approaches that assign

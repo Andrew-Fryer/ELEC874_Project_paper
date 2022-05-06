@@ -23,13 +23,13 @@ The mean and standard deviation of the images in the training dataset was comput
 For efficiency, all of the images in the dataset were then resized, transformed (inverted), and normalized according the paper's description and then saved back into png files.
 [I didn't save the image data to disk as a .pt file (as a tensor) because I figured that png compression is probably better than the .pt compression since it is image-specific.]
 
-Training is taking way too long, so I'm going to try to get the following to work:
--divide images once
--resize and normalize images once
--each time:
-    -load all images into memory as a `list` of tensors
-    -store a training and validation list of triples (ind_into_img_list, ind2, y/n)
-This way, we only read the images from disk at the beginning, so it should be a lot faster.
+% Training is taking way too long, so I'm going to try to get the following to work:
+% -divide images once
+% -resize and normalize images once
+% -each time:
+%     -load all images into memory as a `list` of tensors
+%     -store a training and validation list of triples (ind_into_img_list, ind2, y/n)
+% This way, we only read the images from disk at the beginning, so it should be a lot faster.
 
 
 Unfortunately, it was later discovered that the last layer of the network was incorrect in the existing implementation and this went unnoticed.

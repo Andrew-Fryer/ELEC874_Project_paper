@@ -125,7 +125,7 @@ Training is very slow for SigNet256.
 
 I will use the same epsilon value for all the tests because Goodfellow says that it is the direction that matters and I want them to be apples to apples.
 
-All of the confusion matrices can be seen in section {sec:results}.
+All of the confusion matrices can be seen in section \ref{sec:results}.
 
 % maybe talk about playing with noise too if I actually get around to doing that properly...
 
@@ -146,10 +146,10 @@ With any luck, I'll have results that say which latent vector size is best for a
 
 I also expiremented with applying multiple pertebations to the same forge and discovered that there are diminising returns.
 I used eps=0.007 and got this:
-0.15297701954841614 <- genuine forge
-0.06897365301847458 <- genuine improved_forge
-0.06892837584018707 <- ...improved_improved_forge
-0.06888322532176971 <- etc
+0.15297701954841614 genuine forge
+0.06897365301847458 genuine improved\_forge
+0.06892837584018707 ...improved\_improved\_forge
+0.06888322532176971 etc
 0.06883807480335236
 0.0687929019331932
 0.06874779611825943
@@ -158,12 +158,12 @@ I used eps=0.007 and got this:
 
 It appeared that the forge was just adding noise, as the genuine is noisy...
 So, I did this:
-``
-improved_forge[improved_forge < 1.0e-06] = 0.0
-''
+$improved_forge[improved_forge < 1.0e-06] = 0.0$
 ...and got this:
 0.06897393614053726
-which is just marginally more than the distance for genuine improved_forge
+which is just marginally more than the distance for genuine improved\_forge
 (so this background noise wasn't really helping that much)
 (maybe I should count how many elements were zeroed...)
 
+
+One interesting problem I ran into was I once manually saved a model just a batch or 2 after it call scheduler.step() (think it what caused it) and it performed much worse than I expected because the optimizer had made large changes... (I realized this becuase the val\_loss jumped up...)

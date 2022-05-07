@@ -107,6 +107,7 @@ Yeah, memoizing the latent vectors when doing validation (and finding a threshol
 ``Here out epsilon of .007 corresponds to the magnitude of the
 smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers.''\cite{goodfellow}
 [Basically, I'll use the same epsilon value...]
+I'll use 0.004 (roughly 1/255); so, on average the pixels change by the sensitivity of the camera...
 
 \subsubsection{Latent Vector Size}
 From Goodfellow's work, I think it might make sense to try playing with latent vector size...?
@@ -141,3 +142,28 @@ Hey, does DeepFool do what I'm talking about?
 With any luck, I'll have results that say which latent vector size is best for accuracy and robustenss to FGSM-like attacks.
 !!! Crap!, I think Goodfellow was talking about the input data being high dimensional, not the output.. !!!
     \^check this...
+
+
+I also expiremented with applying multiple pertebations to the same forge and discovered that there are diminising returns.
+I used eps=0.007 and got this:
+0.15297701954841614 <- genuine forge
+0.06897365301847458 <- genuine improved_forge
+0.06892837584018707 <- ...improved_improved_forge
+0.06888322532176971 <- etc
+0.06883807480335236
+0.0687929019331932
+0.06874779611825943
+0.06870264559984207
+0.06807156652212143
+
+It appeared that the forge was just adding noise, as the genuine is noisy...
+So, I did this:
+``
+improved_forge[improved_forge < 1.0e-06] = 0.0
+''
+...and got this:
+0.06897393614053726
+which is just marginally more than the distance for genuine improved_forge
+(so this background noise wasn't really helping that much)
+(maybe I should count how many elements were zeroed...)
+

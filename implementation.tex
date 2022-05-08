@@ -9,65 +9,49 @@ Attack it using a technique similar to FGSM.
 [Try to improve SigNet's resilience to the attack.]
 
 
-\subsection{Procedure and Workarounds}
+\subsection{Procedure}
 
-For implementing the SigNet, 3 resources were used.
-The SigNet paper was consulted, which describes the model completely\cite{sig_net}.
-The Keras code presumably by one of the paper authors was used for clarification\cite{GitHub_sounakdey}.
-Lastly, an existing PyTorch implementation of SigNet was used as a starting place\cite{GitHub_signet_pytorch}.
+For implementing the data preparation and SigNet architecture, 3 resources were used.
+An existing PyTorch implementation of SigNet, \cite{GitHub_signet_pytorch}, was used as a starting place.
+The SigNet paper, \cite{sig_net}, was used to check that the implementation was correct.
+For a few details, the paper was ambigious, so a Keras implementation, \cite{GitHub_sounakdey} which appears to be written by one of the paper's authors was used for clarification.
 
-The existing PyTorch implementation first restructured into a Jupyter Notebook.
-Then, it was checked against the specification of the network in the paper.
+The existing PyTorch implementation was first restructured into a Jupyter Notebook so that it could be easily run on Google Colaboratory.
+
+The SigNet papers describes expirements on several datasets, but only achieves 100\% accuracy on the CEDAR dataset (which is amoung the cleanest).
+For simplicity and reduced training time, only the CEDAR is used in this paper.
+% todo ref CEDAR
+
+The dataset was partitioned and prepared as described in the SigNet paper (which is very similar to \cite{LeCun}).
+
 The existing training process did not implement data normalization, so this was implemented as per the paper.
 The mean and standard deviation of the images in the training dataset was computed (after spliting the images in the CEDAR dataset into training and validation images and pairing images).
-For efficiency, all of the images in the dataset were then resized, transformed (inverted), and normalized according the paper's description and then saved back into png files.
-[I didn't save the image data to disk as a .pt file (as a tensor) because I figured that png compression is probably better than the .pt compression since it is image-specific.]
+All of the images in the dataset were then resized, transformed (inverted), and normalized according the paper's description and then saved back into png files for efficient loading of the data on subsequent runs.
+The png format was used rather than simply saving the tensors because png compression may perform better than the PyTorch (pt file) compression since png files are specific to images.
 
-% Training is taking way too long, so I'm going to try to get the following to work:
-% -divide images once
-% -resize and normalize images once
-% -each time:
-%     -load all images into memory as a `list` of tensors
-%     -store a training and validation list of triples (ind_into_img_list, ind2, y/n)
-% This way, we only read the images from disk at the beginning, so it should be a lot faster.
+In an attempt to speed up the training process, all images are loaded in memory before training begins.
+Rather than reading image data from disk, the dataloader simply indexes an array.
+This is effective because there are many more training points (image pairs) than images, and it is feasible because the total uncompressed data in the images after they are resized is approximately 82 MB (2400 images of size 155 by 220 with pixels in range 0 to 255).
 
-Only training on CEDAR due to time constraints
-(Perhaps we'd get better accuracy if we trained on several datasets and validated on just CEDAR... did the SigNet paper do that?)
-
-
-Unfortunately, it was later discovered that the last layer of the network was incorrect in the existing implementation and this went unnoticed.
-The Signet implementation in this paper has [last layer output size is 256 instead of 128].
-% would training go faster if this was fixed?
-% I could also try to use the trained incorrect model to initialize the correct model...
-
-The process of preparing the data is all the same.
-While the paper uses several datasets, this paper only uses the CEDAR dataset due to time constraints [ref].
-% todo: ref
+An error was found in the SigNet PyTorch implementation, fixed, and merged back into the codebase.
+% https://github.com/VinhLoiIT/signet-pytorch/pull/5
 
 Another small disrepency is in the initialization of model weights.
-``We initialize the weights of the model according to the work
-of Glorot and Bengio [20], and the biases equal to 0. We trained
-the model using RMSprop for 20 epochs, using momentum rate
-equal to 0.9, and mini batch size equal to 128.'' <- SigNet
-% todo
-% I'm not sure if the biases were correctly initialized to 0 or if the other weights were initialized with the same strategy...
+The SigNet paper says that weights are initialized ``according to the work
+of Glorot and Bengio \cite{glorot_bengio}, and the biases equal to 0''\cite{sig_net}.
+Instead of porting the Keras code to PyTorch, the default PyTorch initialization is used.
+% this was largely to avoid re-running training, which took a long time
+% dang, that paper says "we propose a new initialization scheme that brings substantially faster convergence"
 
-Training was done on Google Colab (using the \_ level tier thing).
-The training process took approximately 1 hour per 1000 [cases/datapoints].
-The training process was changed to use a dataloader that stores all of the image data in computer memory instead of repeatedly accessing the information from disk in the form of PNG files.
-This is feasible because the number of images is far fewer than the number of pairs of images (which are used as [cases/datapoints]).
-Unfortunately, this did not seem to speed up the training process significantly.
+All of the hyper-parameters are chosen to be the same as SigNet.
+% except batch size, which is set to 1...
 
-I should try increasing the batch size!!!!
+Training was done on Google Colab (using "Colab Pro" with a "High RAM" and GPU runtime).
+Unfortuantely, weights from a trained SigNet model could not be found anywhere.
+The training speed varied drastically, from approximately 10 minutes to 1 hour per 1000 datapoints.
 
-The model was trained for approximately \_ hours [until batch 19050] and then evaluated, yeilding an accuracy of 72\%.
-Then, it was trained until the end of the first epoch (another \_ hours) and evaluated [validated?] again.
-This time the accuracy was 94\%.
+While the original SigNet is trained for 20 epochs, the models in this paper were all trained for 5 epochs due to time constraints (as the first training epoch that finished took over 24 hours to run).
 
-Although the paper trains the model for 20 epochs, training was stopped at 1 epoch due to time constraints and because 94\% accuracy seemed sufficient for the puposes of this paper.
-(Unfortuantely weights from a trained SigNet model could not be obtained.)
-
-I didn't do the weight initialization the same way (because I didn't do it the first time and I didn't have time to re-run stuff...)
 
 \subsubsection{Loss}
 Alpha and Beta in the contrastive loss are both 1, as in SigNet\cite{GitHub_sounakdey}.
@@ -76,9 +60,11 @@ It was decided not to implement triplet loss for SigNet because it would be subs
 
 \subsection{Expirements}
 
-[I] seek to validate the model as if it were used in a live production signature verification system, understand how effective a white-box attack would be, and understand how latent vector size would impact the accuracy and robustness of the system.
+Expirements were conducted with the intent to validate the model as if it were used in a live production signature verification system, to understand how effective white-box [and black-box] attacks are, and to understand how latent vector size impacts the accuracy and robustness of the system.
 
 \subsubsection{Threshold Strategy}
+This code was checked against the Keras implementation.
+
 The code in the repo presumably by the SigNet paper author computes accuracy given a thrsehold that is determined by taking the threshold that gives the best accuracy on the validation set.
 IMHO, this is wrong because the threshold is information that is technically part of the classifier that is being leaked from the validation set.
 See: \url{https://github.com/sounakdey/SigNet/blob/master/SigNet_v1.py#L84}

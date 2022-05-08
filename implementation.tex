@@ -92,6 +92,18 @@ In this paper, a threshold distance was instead computed from a sample of the tr
 The average of these was then used as the threshold for evaluation.
 The thinking here is that the distances for genuine and for impostor are probably Gaussian (why don't I check???), so the halfway point between the medians is probably pretty good.
 
+We can see that the data is very nicely seperated (for SigNet128 trained for 20 epochs).
+The threshold distance as done by the [leaky one] is: 0.0402.
+The threshold distance as done for the rest of this paper is: 0.0335.
+This is significantly different, but results in only a slightly higher accuracy (99.67\% compared to 99.49\%) because the data is very well seperated.
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{distance_histogram_signet_128.png}
+    \end{center}
+    \caption{Histogram of Distances of Validation Set for SigNet128}
+    \label{fig:histogram}
+\end{figure}
+
 Can't use LeCun's method because that requires several images of the genuine... (they use 5..)
 More complex thresholds based off of \cite{LeCun} were considered, but were not implemented due to time constraints.
 These are mentioned in section \ref{sec:future_work}.

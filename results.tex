@@ -10,11 +10,17 @@ Also, try to perturb non-matching signatures and even random noise...
 Here's a table of the accuracy (true/false positive/negative matix).
 % todo: compute matrix...
 
-\begin{table}
+\begin{table*}[t]
     \centering
-    \begin{tabular}{|c c c c c c c c c|}
+    \begin{tabular}{|c | c c | c c | >{\bfseries}c | c c >{\em}c|}
+    % \begin{tabular}{|m{2.5cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm}|}
         \hline
-        Latent vector dimensionality & true positive & false negative & false positive & true negative & acc & false positive imp & true negative imp & acc imp\\ [0.1ex]
+        % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
+        % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
+        \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
+        & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
+        % \hline
+        & True & False & True & False & & True & False & \\
         \hline
         64  & 82.90 & 17.10 & 0.29 & 99.71 & 91.30 & 32.61 & 67.39 & 83.33\\
         128 & 75.65 & 24.35 & 16.23 & 83.77 & 79.71 & 87.75 & 12.25 & 57.22\\
@@ -23,7 +29,7 @@ Here's a table of the accuracy (true/false positive/negative matix).
     \end{tabular}
     \caption{Comparison of Accuracy using Latent Vector Sizes}
     \label{table:1}
-\end{table}
+\end{table*}
 
 Here's a genuine and a forge and we apply various epsilon values and also repeat...
     There are diminising returns on continually nudging a forge.

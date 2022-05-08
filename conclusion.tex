@@ -1,13 +1,17 @@
-\section{Conclusion}\label{sec:conclusion}
+\section{Conclusions}\label{sec:conclusion}
 
-We are/are not able to fool Signet.
-This was/was not anticipated.
+SigNet was more resistent to the attack than expected.
+Training for a longer time improved its performance.
+Goodfellow says that adversarial regularizers complement dropout, but it seems that dropout may have done a good job.
 
-We do it using (inverted) FGSM, but we could alternatively do it by lots of trial and error...?
-    I should test this!
-
-This qualitatively shows that SigNet's [desicion] is largely influenced by [].
-
-
+Was this because of a flaw in the dataset???
 I speculate that SigNet is learning info about the cameras/lighting conditions used for each person/or set up maybe?
 ...my thinking is that the pertebation looked like background noise, the genuine had all zeros in the background, and the forge had non-zero small values in the background...
+This qualitatively shows that SigNet's [desicion] is largely influenced by [].
+
+swapping out networks shows/disproves that a black box attack is nearly as effective as a white-box attack.
+
+It seems that larger latent vectors are better/worse suited to prediction and better/worse suited to resistence against adversarial attacks.
+
+The thresholding function does/does not matter.
+

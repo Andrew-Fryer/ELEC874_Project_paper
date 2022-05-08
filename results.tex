@@ -1,5 +1,8 @@
 \section{Results}\label{sec:results}
 
+I don't think I even need a section for this...
+Just reference it in the Implementation section and the Conclusions section.
+
 Talk about losses?
 Here are the confusion matrices.
 Here are some examples of images, pertebations, and resulting perturbed images.
@@ -7,28 +10,55 @@ I could also find the n closest signatures to a signature and see what that look
 Also try pertebations on swapped networks!
 Also, try to perturb non-matching signatures and even random noise...
 
+Also plot distances (genuine and impostor and adversarial impostor) for SigNet128 to see if they are actually Gaussian...
+
+I could also dot product normalized gradients of successive pertebations to see how similar the directions are...
+
 Here's a table of the accuracy (true/false positive/negative matix).
 % todo: compute matrix...
 
 \begin{table*}[t]
     \centering
-    \begin{tabular}{|c | c c | c c | >{\bfseries}c | c c >{\em}c|}
+    \begin{tabular}{|c | c >{\em}c | >{\em}c c | >{\bfseries}c | >{\em}c c >{\bfseries}c|}
     % \begin{tabular}{|m{2.5cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm}|}
         \hline
         % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
         % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
         \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
+        \hline
         & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
         % \hline
-        & True & False & True & False & & True & False & \\
+        & True & False & False & True & & False & True & \\
         \hline
-        64  & 82.90 & 17.10 & 0.29 & 99.71 & 91.30 & 32.61 & 67.39 & 83.33\\
-        128 & 75.65 & 24.35 & 16.23 & 83.77 & 79.71 & 87.75 & 12.25 & 57.22\\
-        256 & 52.83 & 47.17 & 6.38 & 93.62 & 73.22 & 27.32 & 72.68 & 73.04\\ [0.1ex]
+        64 & 82.90 & 0.29 & 17.10 & 99.71 & 91.30 & 32.61 & 67.39 & 75.14\\
+        128 & 75.65 & 16.23 & 24.35 & 83.77 & 79.71 & 87.75 & 12.25 & 43.95\\
+        256 & 52.83 & 6.38 & 47.17 & 93.62 & 73.22 & 27.32 & 72.68 & 62.75\\ [0.1ex]
         \hline
     \end{tabular}
-    \caption{Comparison of Accuracy using Latent Vector Sizes}
+    \caption{Comparison of Accuracy using Latent Vector Sizes after 5 Epochs}
     \label{table:1}
+\end{table*}
+
+\begin{table*}[t]
+    \centering
+    \begin{tabular}{|c | c >{\em}c | >{\em}c c | >{\bfseries}c | >{\em}c c >{\bfseries}c|}
+    % \begin{tabular}{|m{2.5cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm}|}
+        \hline
+        % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
+        % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
+        \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
+        \hline
+        & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
+        % \hline
+        & True & False & False & True & & False & True & \\
+        \hline
+        64 & 97.61 & 0.00 & 2.39 & 100.00 & 98.80 & 2.83 & 97.17 & 97.39\\
+        128 & 98.99 & 0.00 & 1.01 & 100.00 & 99.49 & 6.59 & 93.41 & 96.20\\
+        % \\ [0.1ex]
+        \hline
+    \end{tabular}
+    \caption{Comparison of Accuracy using Latent Vector Sizes after 20 epochs}
+    \label{table:2}
 \end{table*}
 
 Here's a genuine and a forge and we apply various epsilon values and also repeat...

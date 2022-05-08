@@ -49,7 +49,7 @@ This loss function penalizes distance between genuine pairs and encourages dista
     \begin{center}
         \includegraphics[width=0.8\linewidth]{siamese_architecture.png}
     \end{center}
-    \caption{Siamese Architecture. (LeCun 2005)}
+    \caption{Siamese Architecture. (LeCun et al. 2005)}
     \label{fig:siamese}
 \end{figure}
 % [Note: the partitioning and pairing of images is the same idea as SigNet.]
@@ -104,9 +104,11 @@ Ian Goodfellow (famous for his development of GANs) has proven that even linear 
 This is interesting in the topic of signature verfication because aversarial attacks could pose a security threat if such verification systems were used in the future.
 
 Fast Gradient Sign Method (FGSM) is a technique for generating adversarial inputs for models.
-An existing input is sent through the model and then the gradient of the model's output is taken with respect to the input.
+An existing input is sent through the model and then the gradient of the loss is taken with respect to the input.
 The input is then preturbed in the opposite direction of the gradient by some distance epsilon.
 This produces a new (preturbed) input that is very similar to the original, but produces a very different output.
+
+They hypothesize that the reason that this works is that neural networks are designed to have some linear properties so that gradients can be computed, allowing the model to be trained\cite{goodfellow}. 
 
 They also show that training on adversarial inputs improves the model's accuracy on adversarial inputs (making it less sussecptible to the FGSM attack).
 

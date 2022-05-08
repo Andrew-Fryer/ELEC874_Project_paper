@@ -61,6 +61,14 @@ The training speed varied drastically, from approximately 10 minutes to 1 hour p
 While the original SigNet is trained for 20 epochs, the models in this paper were all trained for 5 epochs due to time constraints (as the first training epoch that finished took over 24 hours to run).
 It seems that 5 epochs was sufficient because the training and validation losses after the first epoch are indistinguishable from those after future epochs.
 
+batch size was set to 1 to avoid OOMs.
+I think this does impact the training process because of some normalization process during training...
+
+Several things slowed down training considerably.
+Having GPU RAM maxed out (I think).
+Initially, (with GPU RAM maxed out and not on a "High RAM" runtime) training an epoch took over 24 hours.
+At its best, training was able to do ~20 epochs in ~8 hours, which is 24 mins per epoch.
+
 
 \subsubsection{Loss}
 The contrastive loss function is used exactly as in SigNet\cite{GitHub_sounakdey}.
@@ -82,6 +90,7 @@ Therefore, the resulting accuracy does not technically demonstrate the accuracy 
 
 In this paper, a threshold distance was instead computed from a sample of the training data by computing the median distance for a genuine pair and for an impostor pair.
 The average of these was then used as the threshold for evaluation.
+The thinking here is that the distances for genuine and for impostor are probably Gaussian (why don't I check???), so the halfway point between the medians is probably pretty good.
 
 More complex thresholds based off of \cite{LeCun} were considered, but were not implemented due to time constraints.
 These are mentioned in section \ref{sec:future_work}.
@@ -110,6 +119,11 @@ These are mentioned in section \ref{sec:future_work}.
 
 \subsubsection{FGSM Attack}
 A variation of the FGSM attack (described in section \ref{sec:fgsm}) is used to attack each SigNet model.
+Latent vectors for a genuine and forge signature are computed.
+The gradient of the loss with respect to the forge image is computed, similarly to FGSM, but instead of using the same loss function used in training, the magnitude of the distance between the latent vectors is used.
+Rather than taking the gradient of the loss function (as in FGSM), the gradient of the magni
+    actually, I do use the loss function...
+
 The magnitude of the distance between the latent vectors for a genuine and forge image is computed.
 The gradient of the magnitude is taken with respect to the forge image.
 The gradient is scaled by some constant $\epsilon$, producing a perturbation.

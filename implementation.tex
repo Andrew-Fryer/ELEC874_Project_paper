@@ -67,7 +67,7 @@ I think this does impact the training process because of some normalization proc
 Several things slowed down training considerably.
 Having GPU RAM maxed out (I think).
 Initially, (with GPU RAM maxed out and not on a "High RAM" runtime) training an epoch took over 24 hours.
-At its best, training was able to do ~20 epochs in ~8 hours, which is 24 mins per epoch.
+At its best, training was able to do ~15 epochs in ~8 hours, which is 32 mins per epoch.
 
 
 \subsubsection{Loss}
@@ -92,6 +92,7 @@ In this paper, a threshold distance was instead computed from a sample of the tr
 The average of these was then used as the threshold for evaluation.
 The thinking here is that the distances for genuine and for impostor are probably Gaussian (why don't I check???), so the halfway point between the medians is probably pretty good.
 
+Can't use LeCun's method because that requires several images of the genuine... (they use 5..)
 More complex thresholds based off of \cite{LeCun} were considered, but were not implemented due to time constraints.
 These are mentioned in section \ref{sec:future_work}.
 

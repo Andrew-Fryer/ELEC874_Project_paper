@@ -1,7 +1,44 @@
 \section{Future Work}\label{sec:future_work}
 Implement triplet loss on a SigNet-like network.
 
+Work has already been done in improving network's by training them an adversarial examples created using FGSM and similar methods.
+
+There was one area of [large] interest that [I] didn't have time to investigate.
+LeCun assumes that the the cluster of the images of one person's face in the latent space is Gaussian.
+We can easily compute the probability that the Gaussian distribution produces a point.
+My understanding is:
+Then, he/they average the probabilities for the impostor images for a subject to estimate p\_impostor (which is just a term that sort of scales the p value of an image to the genuine cluster so that ...)
+This is just comparing the p value (probability that the Gaussian distribution for the genuines produced the point) to the averge p value of the impostors.
+(If I understand this correctly,) This doesn't make sense!
+Even if the mapping to embedded space seperates people perfectly this strategy will let something half of the impostors go because statistically something like half of the impostor's p value will be less than the average of all impostors' p values.
+(not exactly half because it depends on what the distribution actually looks like...)
+Instead, we could compute a p\_impostor value if we assume that the impostors also form a Gaussian distribution (which is not probable given that the model is trying to create a margin, but may result in good accuracy...)
+
+In our one-shot (only 1 genuine image) system, we can't compute a Gaussian distribution for each person.
+Instead, we could make the assumption that the distribution for each person looks the same for its genuines and also for its impostors.
+Then, we can compute a distrubution for the genuines.
+We could the approach that LeCun does here, (and say that we just sort of scale p using the average impostor p).
+Or, we can assume that the impostor signatures also form a gaussian distribution.
+Then, we can do the following:
+\begin{flalign*}
+is genuine & = P_g > P_i&\\
+        & = Bayes&\\
+        & = Multivariate Gaussian&\\
+        & = take ln&\\
+        & = simplify&\\
+        & = -x^T * \sigma_g^-1 * x > -x^T * \sigma_i^-1 * x + 2 * (ln(det(\sigma)^-1/2) - ln(det(\sigma)^-1/2))&\\
+\end{flalign*}
+where g is for genuine and i is for impostor
+where < is the computer science ``less than'' comparison operator rather than denoting an inequality.
+\begin{eqnarray}
+f(y_{i}|\mu,\Sigma) & =\nonumber \\
+    & = & f((y_{i1},y_{i2},...,y_{in})'\,|\,\mu=(\mu_{1},...,\mu_{n})',\Sigma=\left[\begin{array}{ccc}
+\sigma_{1}^{2} &  & \sigma_{1n}\\
+    & \ddots\\
+\sigma_{n1} &  & \sigma_{n}^{2}
+\end{array}\right])\nonumber \\
+    &  & =\frac{1}{\sqrt{(2\pi)^{n}|\Sigma|}}exp(-\frac{1}{2}(y_{i}-\mu)'\Sigma^{-1}(y_{i}-\mu))
+\end{eqnarray}
+
 If I didn't get to implementing a cool threshold I should talk about that here...
 TODO: talk about Gaussian threshold idea
-
-Work has already been done in improving network's by training them an adversarial examples created using FGSM and similar methods.

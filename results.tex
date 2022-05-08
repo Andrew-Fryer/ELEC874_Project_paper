@@ -46,7 +46,7 @@ Here's a table of the accuracy (true/false positive/negative matix).
         \hline
         % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
         % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
-        \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
+        \multirow{3}{*}{Latent Vector Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
         \hline
         & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
         % \hline
@@ -54,7 +54,7 @@ Here's a table of the accuracy (true/false positive/negative matix).
         \hline
         64 & 97.61 & 0.00 & 2.39 & 100.00 & 98.80 & 2.83 & 97.17 & 97.39\\
         128 & 98.99 & 0.00 & 1.01 & 100.00 & 99.49 & 6.59 & 93.41 & 96.20\\
-        % \\ [0.1ex]
+        256 & 98.04 & 0.00 & 1.96 & 100.00 & 99.02 & 6.45 & 93.55 & 95.80\\ [0.1ex]
         \hline
     \end{tabular}
     \caption{Comparison of Accuracy using Latent Vector Sizes after 20 epochs}
@@ -71,7 +71,8 @@ Here's the same thing with 2 genuines of different signatures.
 Here's the same thing with 2 genuines of the same signature.
 
 
-the training loss is not stable
+If I need more content, I could graph the training loss and talk about how it stabilzes.
+
 the accuracy after \_ amount of training was 72% accuracy
 It would take too long to get 100% accuracy
 

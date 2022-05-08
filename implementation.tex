@@ -42,6 +42,7 @@ of Glorot and Bengio \cite{glorot_bengio}, and the biases equal to 0''\cite{sig_
 Instead of porting the Keras code to PyTorch, the default PyTorch initialization is used.
 % this was largely to avoid re-running training, which took a long time
 % dang, that paper says "we propose a new initialization scheme that brings substantially faster convergence"
+% The models converged quickly, so this seems to be okay.
 
 All of the hyper-parameters are chosen to be the same as SigNet.
 % except batch size, which is set to 1...
@@ -51,11 +52,12 @@ Unfortuantely, weights from a trained SigNet model could not be found anywhere.
 The training speed varied drastically, from approximately 10 minutes to 1 hour per 1000 datapoints.
 
 While the original SigNet is trained for 20 epochs, the models in this paper were all trained for 5 epochs due to time constraints (as the first training epoch that finished took over 24 hours to run).
+It seems that 5 epochs was sufficient because the training and validation losses after the first epoch are indistinguishable from those after future epochs.
 
 
 \subsubsection{Loss}
-Alpha and Beta in the contrastive loss are both 1, as in SigNet\cite{GitHub_sounakdey}.
-It was decided not to implement triplet loss for SigNet because it would be substantial work and it seems that it would take far too long to train.
+The contrastive loss function is used exactly as in SigNet\cite{GitHub_sounakdey}.
+It was decided not to try using a triplet loss function for SigNet because it would be substantial work (mainly partiting the data and dynamically selecting image triplets intelligently) and it seems that triplet loss is mainly useful for modelling more complex data when large compute resources are available.
 
 
 \subsection{Expirements}
@@ -63,9 +65,9 @@ It was decided not to implement triplet loss for SigNet because it would be subs
 Expirements were conducted with the intent to validate the model as if it were used in a live production signature verification system, to understand how effective white-box [and black-box] attacks are, and to understand how latent vector size impacts the accuracy and robustness of the system.
 
 \subsubsection{Threshold Strategy}
-This code was checked against the Keras implementation.
+% This code was checked against the Keras implementation.
 
-The code in the repo presumably by the SigNet paper author computes accuracy given a thrsehold that is determined by taking the threshold that gives the best accuracy on the validation set.
+The code in the Keras implementation computes accuracy given a thrsehold that is determined by taking the threshold that gives the best accuracy on the validation set.
 IMHO, this is wrong because the threshold is information that is technically part of the classifier that is being leaked from the validation set.
 See: \url{https://github.com/sounakdey/SigNet/blob/master/SigNet_v1.py#L84}
 This approach is useful for understanding the potential of SigNet, but does not give an accuracy evaluation of the accuracy that SigNet would have in the real world because of this information leakage.
@@ -120,27 +122,20 @@ All of the confusion matrices can be seen in section \ref{sec:results}.
 I want to compute my metric of thresholds and prove hopefully prove that results in better accuracy than just optimizing the threshold (by trying all distances) on the training data.
 I want to compute a confusion matrix for the 3 models and then recompute it after applying pertebations.
 
-If I have time, I'll also train SigNet128 until it has similar validation loss to that of SigNet64 and then recompute the confusion matrices (and confusion matrices after pertebation).
-
 Hey, does DeepFool do what I'm talking about?
     I should give it another glance before implementing...
 
 With any luck, I'll have results that say which latent vector size is best for accuracy and robustenss to FGSM-like attacks.
-!!! Crap!, I think Goodfellow was talking about the input data being high dimensional, not the output.. !!!
-    \^check this...
-
 
 I also expiremented with applying multiple pertebations to the same forge and discovered that there are diminising returns.
-I used eps=0.007 and got this:
-0.15297701954841614 genuine forge
-0.06897365301847458 genuine improved\_forge
-0.06892837584018707 ...improved\_improved\_forge
-0.06888322532176971 etc
-0.06883807480335236
-0.0687929019331932
-0.06874779611825943
-0.06870264559984207
-0.06807156652212143
+% I used eps=0.007 and got this:
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{dist_pert_plot.png}
+    \end{center}
+    \caption{Successive Perturbations on a Forgery}
+    \label{fig:siamese}
+\end{figure}
 
 It appeared that the forge was just adding noise, as the genuine is noisy...
 So, I did this:

@@ -30,9 +30,9 @@ Here's a table of the accuracy (true/false positive/negative matix).
         % \hline
         & True & False & False & True & & False & True & \\
         \hline
-        64 & 82.90 & 0.29 & 17.10 & 99.71 & 91.30 & 32.61 & 67.39 & 75.14\\
-        128 & 75.65 & 16.23 & 24.35 & 83.77 & 79.71 & 87.75 & 12.25 & 43.95\\
-        256 & 52.83 & 6.38 & 47.17 & 93.62 & 73.22 & 27.32 & 72.68 & 62.75\\ [0.1ex]
+        64 & 1144 & 4 & 236 & 1376 & 91.30 & 450 & 930 & 75.14\\
+        128 & 1044 & 224 & 336 & 1156 & 79.71 & 1211 & 169 & 43.95\\
+        256 & 729 & 88 & 651 & 1292 & 73.22 & 377 & 1003 & 62.75\\ [0.1ex]
         \hline
     \end{tabular}
     \caption{Comparison of Accuracy using Latent Vector Sizes after 5 Epochs}
@@ -46,15 +46,15 @@ Here's a table of the accuracy (true/false positive/negative matix).
         \hline
         % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
         % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
-        \multirow{3}{*}{Latent Vector Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
+        \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
         \hline
         & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
         % \hline
         & True & False & False & True & & False & True & \\
         \hline
-        64 & 97.61 & 0.00 & 2.39 & 100.00 & 98.80 & 2.83 & 97.17 & 97.39\\
-        128 & 98.99 & 0.00 & 1.01 & 100.00 & 99.49 & 6.59 & 93.41 & 96.20\\
-        256 & 98.04 & 0.00 & 1.96 & 100.00 & 99.02 & 6.45 & 93.55 & 95.80\\ [0.1ex]
+        64 & 1347 & 0 & 33 & 1380 & 98.80 & 39 & 1341 & 97.39\\
+        128 & 1366 & 0 & 14 & 1380 & 99.49 & 91 & 1289 & 96.20\\
+        256 & 1353 & 0 & 27 & 1380 & 99.02 & 89 & 1291 & 95.80\\ [0.1ex]
         \hline
     \end{tabular}
     \caption{Comparison of Accuracy using Latent Vector Sizes after 20 epochs}

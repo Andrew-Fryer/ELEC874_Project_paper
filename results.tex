@@ -10,6 +10,21 @@ Also, try to perturb non-matching signatures and even random noise...
 Here's a table of the accuracy (true/false positive/negative matix).
 % todo: compute matrix...
 
+\begin{table}
+    \centering
+    \begin{tabular}{|c c c c c c c c c|}
+        \hline
+        Latent vector dimensionality & true positive & false negative & false positive & true negative & acc & false positive imp & true negative imp & acc imp\\ [0.1ex]
+        \hline
+        64  & 82.90 & 17.10 & 0.29 & 99.71 & 91.30 & 32.61 & 67.39 & 83.33\\
+        128 & 75.65 & 24.35 & 16.23 & 83.77 & 79.71 & 87.75 & 12.25 & 57.22\\
+        256 & 52.83 & 47.17 & 6.38 & 93.62 & 73.22 & 27.32 & 72.68 & 73.04\\ [0.1ex]
+        \hline
+    \end{tabular}
+    \caption{Comparison of Accuracy using Latent Vector Sizes}
+    \label{table:1}
+\end{table}
+
 Here's a genuine and a forge and we apply various epsilon values and also repeat...
     There are diminising returns on continually nudging a forge.
 

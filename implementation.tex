@@ -5,6 +5,7 @@
 % todo: move related work section here and integrate
 
 Take Signet.
+Try different latent vector sizes.
 Attack it using a technique similar to FGSM.
 [Try to improve SigNet's resilience to the attack.]
 
@@ -33,6 +34,7 @@ In an attempt to speed up the training process, all images are loaded in memory 
 Rather than reading image data from disk, the dataloader simply indexes an array.
 This is effective because there are many more training points (image pairs) than images, and it is feasible because the total uncompressed data in the images after they are resized is approximately 82 MB (2400 images of size 155 by 220 with pixels in range 0 to 255).
 
+\subsubsection{Deviations from SigNet}
 An error was found in the SigNet PyTorch implementation, fixed, and merged back into the codebase.
 % https://github.com/VinhLoiIT/signet-pytorch/pull/5
 
@@ -44,9 +46,14 @@ Instead of porting the Keras code to PyTorch, the default PyTorch initialization
 % dang, that paper says "we propose a new initialization scheme that brings substantially faster convergence"
 % The models converged quickly, so this seems to be okay.
 
-All of the hyper-parameters are chosen to be the same as SigNet.
+% All of the hyper-parameters are chosen to be the same as SigNet.
 % except batch size, which is set to 1...
 
+As discussed in section \ref{??}, the latent vector size is an interesting factor.
+To understand its importance [and effect/role], the size of SigNet's output was adjusted by modifying only the last layer.
+The resulting networks have a 64, 128 (unchanged), and 256 dimensional outputs and are later reffered to as SigNet64, SigNet128, and SigNet256.
+
+\subsubsection{Training}
 Training was done on Google Colab (using "Colab Pro" with a "High RAM" and GPU runtime).
 Unfortuantely, weights from a trained SigNet model could not be found anywhere.
 The training speed varied drastically, from approximately 10 minutes to 1 hour per 1000 datapoints.
@@ -67,73 +74,85 @@ Expirements were conducted with the intent to validate the model as if it were u
 \subsubsection{Threshold Strategy}
 % This code was checked against the Keras implementation.
 
-The code in the Keras implementation computes accuracy given a thrsehold that is determined by taking the threshold that gives the best accuracy on the validation set.
-IMHO, this is wrong because the threshold is information that is technically part of the classifier that is being leaked from the validation set.
-See: \url{https://github.com/sounakdey/SigNet/blob/master/SigNet_v1.py#L84}
-This approach is useful for understanding the potential of SigNet, but does not give an accuracy evaluation of the accuracy that SigNet would have in the real world because of this information leakage.
+The code in the Keras implementation computes accuracy as the SigNet paper describes.
+As mentioned in section \ref{sec:sig_net}, a threshold is selected by examining the validation set (and choosing the optimal threshold).
+This approach is useful for understanding the potential of the SigNet architecture.
+However, the threshold is technically part of the classification system, information is leaked from the validation set.
+Therefore, the resulting accuracy does not technically demonstrate the accuracy that SigNet would have in the real world.
+
+In this paper, a threshold distance was instead computed from a sample of the training data by computing the median distance for a genuine pair and for an impostor pair.
+The average of these was then used as the threshold for evaluation.
+
+More complex thresholds based off of \cite{LeCun} were considered, but were not implemented due to time constraints.
+These are mentioned in section \ref{sec:future_work}.
 
 
-I should compute the divide as $p_same / (p_same + p_different)$ where each p is computed as the Gaussian distribution of the distances on the training data...
+% I should compute the divide as $p_same / (p_same + p_different)$ where each p is computed as the Gaussian distribution of the distances on the training data...
 
-!!! I don't think that SigNet implements the decision (genuine vs. forge) correctly !!!
-It treats all dimensions with equal weight, whereas LeCun computes the mean and cov mat of several genuine images and then computes p based on a Gaussian assumption.
-Yeah, SigNet just finds a threshold distance and uses that... (which naively weights all dimensions equally)
+% !!! I don't think that SigNet implements the decision (genuine vs. forge) correctly !!!
+% It treats all dimensions with equal weight, whereas LeCun computes the mean and cov mat of several genuine images and then computes p based on a Gaussian assumption.
+% Yeah, SigNet just finds a threshold distance and uses that... (which naively weights all dimensions equally)
 
-compute mean and std\_dev of the distance between a matching and non-matching pair on a bunch of training points.
+% compute mean and std\_dev of the distance between a matching and non-matching pair on a bunch of training points.
 
-I think that what I should implement (also) is compute the mean and covariance (matices) of the genuine and forge data latent vectors over a bunch of training pairs. (To compute variance, I might need to store the latent vectors in CPU RAM and free the GPU RAM to avoid GPU OOM.)
-I can also compute the confusion matrix using the simple threshold distance and my thing and discuss the performance differences.
+% I think that what I should implement (also) is compute the mean and covariance (matices) of the genuine and forge data latent vectors over a bunch of training pairs. (To compute variance, I might need to store the latent vectors in CPU RAM and free the GPU RAM to avoid GPU OOM.)
+% I can also compute the confusion matrix using the simple threshold distance and my thing and discuss the performance differences.
 
-Maybe I should also try what LeCun did with computing normal distribution for an individual and then using inverse FGSM (aka gradient descent on the input... could I use Pytorch optimizer and stuff for choosing a step value??? no!, don't bother)
+% Maybe I should also try what LeCun did with computing normal distribution for an individual and then using inverse FGSM (aka gradient descent on the input... could I use Pytorch optimizer and stuff for choosing a step value??? no!, don't bother)
 
-If I transfer the latent vectors to the CPU (and don't include the gradients!), then I can easily store the latent vectors for all of the training images!
-(should be 128 floats for each, but FaceNet paper says we can compress to 128 bytes ``without loss of accuracy'' ... but they don't say how exactly...)
-Then, I could compute the covariances of the clusters and also do some analytics on understanding the clusters.
-Yeah, memoizing the latent vectors when doing validation (and finding a threshold(s)) is a really good idea!
+% If I transfer the latent vectors to the CPU (and don't include the gradients!), then I can easily store the latent vectors for all of the training images!
+% (should be 128 floats for each, but FaceNet paper says we can compress to 128 bytes ``without loss of accuracy'' ... but they don't say how exactly...)
+% Then, I could compute the covariances of the clusters and also do some analytics on understanding the clusters.
+% Yeah, memoizing the latent vectors when doing validation (and finding a threshold(s)) is a really good idea!
+
+% Assume that both genuine pair distance vectors and impostor pair distance vectors are Gaussian, and then compare probabilities (computed using Bayes Theorem and Gaussian distributions).
+% The comparison can simplified significantly like so:...
 
 \subsubsection{FGSM Attack}
-``Here out epsilon of .007 corresponds to the magnitude of the
-smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers.''\cite{goodfellow}
-[Basically, I'll use the same epsilon value...]
-I'll use 0.004 (roughly 1/255); so, on average the pixels change by the sensitivity of the camera...
+A variation of the FGSM attack (described in section \ref{sec:fgsm}) is used to attack each SigNet model.
+The magnitude of the distance between the latent vectors for a genuine and forge image is computed.
+The gradient of the magnitude is taken with respect to the forge image.
+The gradient is scaled by some constant $\epsilon$, producing a perturbation.
+The pertebation is then added to the forge image to produce a pertebed (improved) forge.
 
-\subsubsection{Latent Vector Size}
-From Goodfellow's work, I think it might make sense to try playing with latent vector size...?
-Trained on 64, 128, and 256.
-The model sizes are: \_, \_, and \_.
-Training was way faster for the smaller models of course, but suprisingly so.
-1000 per hour vs. \_ vs. \_...
+WAIT, shouldn't we subtract it???
 
-Training loss suggests that none of the models overfit.
-
-smaller models more accuracate after one epoch, but also have many fewer parameters, so this could just mean that they are very underfit (we only did one epoch because training is so slow).
-Training is very slow for SigNet256.
-(I should introduce the names "SigNet64,128,256" earlier.)
-[I should also stick all 3 models in one notebook and attach a name to the models to compute the save\_file str.]
-
+In the original paper on FGSM, 0.007 is used as the $\epsilon$ value because it corresponds to a pertebation that is a rounding error when averaged over the image.
+More precisely, it is ``the magnitude of the smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers''\cite{goodfellow}.
+For this paper, 0.004 (roughly 1/256) was used becuase each pixel takes a grayscale value from 0 to 255.
+This $\epsilon$ value was used for all models because...
 I will use the same epsilon value for all the tests because Goodfellow says that it is the direction that matters and I want them to be apples to apples.
 
-All of the confusion matrices can be seen in section \ref{sec:results}.
-
-% maybe talk about playing with noise too if I actually get around to doing that properly...
-
-
-\section{just notes lol}
-I want to compute my metric of thresholds and prove hopefully prove that results in better accuracy than just optimizing the threshold (by trying all distances) on the training data.
-I want to compute a confusion matrix for the 3 models and then recompute it after applying pertebations.
-
-Hey, does DeepFool do what I'm talking about?
-    I should give it another glance before implementing...
-
-With any luck, I'll have results that say which latent vector size is best for accuracy and robustenss to FGSM-like attacks.
-
-I also expiremented with applying multiple pertebations to the same forge and discovered that there are diminising returns.
+I expiremented with applying multiple pertebations to the same forge and discovered that there are diminising returns.
 % I used eps=0.007 and got this:
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{dist_pert_plot.png}
     \end{center}
     \caption{Successive Perturbations on a Forgery}
+    \label{fig:siamese}
+\end{figure}
+
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{genuine.png}
+    \end{center}
+    \caption{Genuine Signature}
+    \label{fig:siamese}
+\end{figure}
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{forge.png}
+    \end{center}
+    \caption{Forged Signature}
+    \label{fig:siamese}
+\end{figure}
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{improved_forge.png}
+    \end{center}
+    \caption{Forged Signature after FGSM Perturbation}
     \label{fig:siamese}
 \end{figure}
 
@@ -146,5 +165,33 @@ which is just marginally more than the distance for genuine improved\_forge
 (so this background noise wasn't really helping that much)
 (maybe I should count how many elements were zeroed...)
 
+% \subsubsection{Latent Vector Size}
+% From Goodfellow's work, I think it might make sense to try playing with latent vector size...?
+% Trained on 64, 128, and 256.
+% The model sizes are: \_, \_, and \_.
+% Training was way faster for the smaller models of course, but suprisingly so.
+% 1000 per hour vs. \_ vs. \_...
 
-One interesting problem I ran into was I once manually saved a model just a batch or 2 after it call scheduler.step() (think it what caused it) and it performed much worse than I expected because the optimizer had made large changes... (I realized this becuase the val\_loss jumped up...)
+% Training loss suggests that none of the models overfit.
+
+% smaller models more accuracate after one epoch, but also have many fewer parameters, so this could just mean that they are very underfit (we only did one epoch because training is so slow).
+% Training is very slow for SigNet256.
+% (I should introduce the names "SigNet64,128,256" earlier.)
+
+
+% All of the confusion matrices can be seen in section \ref{sec:results}.
+
+% maybe talk about playing with noise too if I actually get around to doing that properly...
+
+
+% \section{just notes lol}
+% I want to compute my metric of thresholds and prove hopefully prove that results in better accuracy than just optimizing the threshold (by trying all distances) on the training data.
+% I want to compute a confusion matrix for the 3 models and then recompute it after applying pertebations.
+
+% Hey, does DeepFool do what I'm talking about?
+%     I should give it another glance before implementing...
+
+% With any luck, I'll have results that say which latent vector size is best for accuracy and robustenss to FGSM-like attacks.
+
+
+% One interesting problem I ran into was I once manually saved a model just a batch or 2 after it call scheduler.step() (think it what caused it) and it performed much worse than I expected because the optimizer had made large changes... (I realized this becuase the val\_loss jumped up...)

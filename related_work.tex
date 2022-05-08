@@ -78,7 +78,7 @@ The FaceNet creators also conclude from their expirements that using latent vect
 % say thing about being able to compress to 128 bytes?
 
 
-\subsection{SigNet}
+\subsection{SigNet}\label{sec:sig_net}
 
 SigNet is a siamese network similar to FaceNet that performs handwritten siganture verification.
 It uses contrastive loss and 128-dimensional latent vectors.
@@ -95,7 +95,7 @@ The SigNet paper does not explain the decision to use contrastive loss over trip
 Since signature verfication is simpler than face verification (and SigNet was trained for far less time than FaceNet), is seems that contrastive loss was used because it is much simpler to implement and has fewer hyper-paramters.
 
 
-\subsection{FGSM}
+\subsection{FGSM}\label{sec:fgsm}
 
 It is established that state-of-the-art deep neural networks are unstable to small, well sought, perturbations of their inputs\cite{deep_fool}.
 

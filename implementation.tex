@@ -231,6 +231,15 @@ This was noticed early on during the research for this paper, but was not scrunt
 The validation set images were analyzed as they are presented to the model: normalized, resized, and inverted.
 The images were binned and then the bins were averaged over all of the images.
 The resulting histogram can be seen in figure \ref{fig:hist_pixel_values}.
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{mean_hist.png}
+    \end{center}
+    \caption{Histogram of Means of Binned Pixel Values}
+    \label{fig:hist_pixel_values}
+\end{figure}
+
 This clearly shows that the images of genuine sigantures have significantly different heuristics compared to the forged signatures.
 In particular, the forged signatures have very few pixels with values in between 1 and 254, while the genuine signatures have many more.
 

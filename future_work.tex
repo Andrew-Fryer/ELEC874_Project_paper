@@ -17,23 +17,26 @@ It would interesting to see how this would impact the quality of the latent spac
 
 Work has already been done in improving network's by training them an adversarial examples created using FGSM and similar methods.
 
-There was one area of [large] interest that [I] didn't have time to investigate.
-LeCun assumes that the the cluster of the images of one person's face in the latent space is Gaussian.
-We can easily compute the probability that the Gaussian distribution produces a point.
-My understanding is:
-Then, he/they average the probabilities for the impostor images for a subject to estimate p\_impostor (which is just a term that sort of scales the p value of an image to the genuine cluster so that ...)
-This is just comparing the p value (probability that the Gaussian distribution for the genuines produced the point) to the averge p value of the impostors.
-(If I understand this correctly,) This doesn't make sense!
-Even if the mapping to embedded space seperates people perfectly this strategy will let something half of the impostors go because statistically something like half of the impostor's p value will be less than the average of all impostors' p values.
-(not exactly half because it depends on what the distribution actually looks like...)
-Instead, we could compute a p\_impostor value if we assume that the impostors also form a Gaussian distribution (which is not probable given that the model is trying to create a margin, but may result in good accuracy...)
+There was one area in particular that is interesting, but couldn't be implemented in the alloted time.
+\cite{LeCun} assumes that the cluster of the images of one person's face in the latent space is Gaussian.
+We can easily compute the probability that a Gaussian distribution produces a point.
+Let's call this probability p\_genuine.
+However, computing the probability that a point belongs to the impostor class is tricky.
+In the paper, they average the p\_geuine probabilities for the impostor images for a subject to produce p\_impostor.
+p\_impostor is used to normalize the p\_genuine value of an image.
+Then a threshold is used on the resulting pseudo-probability.
+(Note that with a threshold of 0.5, something like half of the impostor points would be classified as being genuine when they are completely disjoint.)
 
-In our one-shot (only 1 genuine image) system, we can't compute a Gaussian distribution for each person.
-Instead, we could make the assumption that the distribution for each person looks the same for its genuines and also for its impostors.
-Then, we can compute a distrubution for the genuines.
-We could the approach that LeCun does here, (and say that we just sort of scale p using the average impostor p).
-Or, we can assume that the impostor signatures also form a gaussian distribution.
-Then, we can do the following:
+They compute a different distribution and threshold for each person using their first 5 images.
+To be consistent with the SigNet paper, this paper uses a one-shot approach, so only one genuine signature is given alongside the signature in question.
+Therefore, we cannot compute a distribution for each person.
+Instead, we could compute a distribution for all genuine signatures.
+
+Their approach makes sense, but it may be advantageous to eliminate the need to pick a threshold.
+An alternate way to compute the probability that a point belongs to the impostor class is to make a somewhat crude assumption that the impostor class is also Gaussian.
+
+The formula for deciding whether or not a point $x$ (difference between latent vectors) should be classified as geuine is given and reduced in figure \ref{proof:gaussian}.
+The $<$ symbol is the computer science ``less than'' comparison operator rather than denoting an inequality, and $g$ is for ``genuine'' and $i$ is for ``impostor''.
 
 \begin{figure}
 \begin{align*}
@@ -57,9 +60,6 @@ is\_genuine & = P_g > P_i&\\
 \caption{Reduction of Gaussian Probability Comparison for a Smart Threshold Function}
 \label{proof:gaussian}
 \end{figure}
-
-where the event $x$ is the pair of latent vectors, $g$ is for ``genuine'', and $i$ is for ``impostor''.
-The $<$ symbol is the computer science ``less than'' comparison operator rather than denoting an inequality.
 
 The assumption the $\Pr(c_g) = \Pr(c_i)$ could be revoked and replaced by a constant ratio of the probabilities and tuned for the system based on the class priors and the desired confidence interval that a pair classified as genuine is in fact genuine.
 

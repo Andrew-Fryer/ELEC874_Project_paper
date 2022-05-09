@@ -35,6 +35,7 @@ We could the approach that LeCun does here, (and say that we just sort of scale 
 Or, we can assume that the impostor signatures also form a gaussian distribution.
 Then, we can do the following:
 
+\begin{figure}
 \begin{align*}
 is\_genuine & = P_g > P_i&\\
         & = \Pr(c_g|x) > \Pr(c_i|x)&\\
@@ -53,25 +54,14 @@ is\_genuine & = P_g > P_i&\\
         & = -x^T * \Sigma_g^-1 * x > -x^T * \Sigma_i^-1 * x &\\
         &    + 2 * (ln(|\Sigma_i|^{-1/2}) - ln(|\Sigma_g|^{-1/2}))&\\
 \end{align*}
+\caption{Reduction of Gaussian Probability Comparison for a Smart Threshold Function}
+\label{proof:gaussian}
+\end{figure}
 
-$\Pr(A|B)=\frac{\Pr(B|A)\Pr(A)}{\Pr(B|A)\Pr(A)+\Pr(B|\neg A)\Pr(\neg A)}$
-% \begin{multiline*}
-%     & = -x^T * \sigma_g^-1 * x > -x^T * \sigma_i^-1 * x &\\
-%     &    + 2 * (ln(det(\sigma)^-1/2) - ln(det(\sigma)^-1/2))&\\
-% \end{multiline*}
 where the event $x$ is the pair of latent vectors, $g$ is for ``genuine'', and $i$ is for ``impostor''.
 The $<$ symbol is the computer science ``less than'' comparison operator rather than denoting an inequality.
 
 The assumption the $\Pr(c_g) = \Pr(c_i)$ could be revoked and replaced by a constant ratio of the probabilities and tuned for the system based on the class priors and the desired confidence interval that a pair classified as genuine is in fact genuine.
-\begin{eqnarray}
-f(x|\mu,\Sigma) & =\nonumber \\
-    & = & f((y_{i1},y_{i2},...,y_{in})'\,|\,\mu=(\mu_{1},...,\mu_{n})',\Sigma=\left[\begin{array}{ccc}
-\sigma_{1}^{2} &  & \sigma_{1n}\\
-    & \ddots\\
-\sigma_{n1} &  & \sigma_{n}^{2}
-\end{array}\right])\nonumber \\
-    &  & =\frac{1}{\sqrt{(2\pi)^{n}|\Sigma|}}exp(-\frac{1}{2}(x-\mu)'\Sigma^{-1}(x-\mu))
-\end{eqnarray}
 
-This can also be implemented to run quickly on the validation set by memoizing the latent vectors for the images.
-This should result in a large performance improvement because there are many more pairs of images than images in the validation set.
+This threshold strategy can be implemented efficiently by memoizing the term $2 * (ln(|\Sigma_i|^{-1/2}) - ln(|\Sigma_g|^{-1/2}))$ and by memoizing the latent vectors for all images in the dataset.
+The latter should result in a large performance improvement because there are many more pairs of images than images in the validation set.

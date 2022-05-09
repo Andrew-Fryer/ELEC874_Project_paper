@@ -96,6 +96,7 @@ We can see that the data is very nicely seperated (for SigNet128 trained for 20 
 The threshold distance as done by the [leaky one] is: 0.0402.
 The threshold distance as done for the rest of this paper is: 0.0335.
 This is significantly different, but results in only a slightly higher accuracy (99.67\% compared to 99.49\%) because the data is very well seperated.
+% the accuracy is actually much better for the adversarial case, but I don't feel like writing about it
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{distance_histogram_signet_128.png}
@@ -144,8 +145,9 @@ More precisely, it is ``the magnitude of the smallest bit of an 8 bit image enco
 For this paper, 0.004 (roughly 1/256) was used becuase each pixel takes a grayscale value from 0 to 255.
 This $\epsilon$ value was used for all models in an attempt to have an apples-to-apples comparison.
 
-I expiremented with applying multiple pertebations to the same forge and discovered that there are diminising returns.
-% I used eps=0.007 and got this:
+Figure \ref{fig:dist_vs_perts} shows how the distance between latent vectors decreases with succesive perturbations, re-computing the gradient each time.
+It is evident that after approximately 4 perturbations the forge will not be distinguishable (using a simple distance metric) from the cluster of genuine signatures shown in figure \ref{fig:hist_distances}.
+% what about a gaussian threshold strategy?
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{dist_pert_plot.png}
@@ -154,7 +156,8 @@ I expiremented with applying multiple pertebations to the same forge and discove
     \label{fig:dist_vs_perts}
 \end{figure}
 
-
+Figure \ref{fig:genuine} shows the genuine signature used for this expirement and figure \ref{fig:forge} shows the forge.
+There is a small, but noticable difference between the forge and the perturbed forge (shown in figure \ref{fig:improved_forge}), but all successive forges are indentical to the once perturbed forge to the human eye.
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{genuine.png}

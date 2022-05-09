@@ -46,5 +46,8 @@ f(y_{i}|\mu,\Sigma) & =\nonumber \\
     &  & =\frac{1}{\sqrt{(2\pi)^{n}|\Sigma|}}exp(-\frac{1}{2}(y_{i}-\mu)'\Sigma^{-1}(y_{i}-\mu))
 \end{eqnarray}
 
+This can also be implemented to run quickly on the validation set by memoizing the latent vectors for the images.
+This should result in a large performance improvement because there are many more pairs of images than images in the validation set.
+
 If I didn't get to implementing a cool threshold I should talk about that here...
 TODO: talk about Gaussian threshold idea

@@ -1,21 +1,11 @@
 \section{Results}\label{sec:results}
 
-I don't think I even need a section for this...
-Just reference it in the Implementation section and the Conclusions section.
-
-Talk about losses?
-Here are the confusion matrices.
-Here are some examples of images, pertebations, and resulting perturbed images.
-I could also find the n closest signatures to a signature and see what that looks like...
-Also try pertebations on swapped networks!
-Also, try to perturb non-matching signatures and even random noise...
-
-Also plot distances (genuine and impostor and adversarial impostor) for SigNet128 to see if they are actually Gaussian...
-
-I could also dot product normalized gradients of successive pertebations to see how similar the directions are...
-
-Here's a table of the accuracy (true/false positive/negative matix).
-% todo: compute matrix...
+The main quantitave data can be seen in tables \ref{table:1} and \ref{table:2}.
+These present a number of metrics for each model that was trained.
+These are the number of true positives, false positives, false negatives, and true negatives, as well as accuracy (as computed in the SigNet paper\cite{sig_net}).
+Additionally, the number of false positives and true negatives and the accuracy are computed and included after the forged image in each of the negative datapoints is perturbed as described is section \ref{my_fgsm}.
+These metrics are shown for the 3 models (SigNet64, SigNet128, and SigNet256) which have dimensionality 64, 128, and 256 of their outputs (latent vectors).
+All metrics are computed on the validation set.
 
 \begin{table*}[t]
     \centering
@@ -61,8 +51,6 @@ Here's a table of the accuracy (true/false positive/negative matix).
     \label{table:2}
 \end{table*}
 
-
-
 As mentioned in section \ref{sec:cedar_flaw}, there is at least one significant difference between the genuine and forge images in the CEDAR dataset.
 Since CNNs are very powerful and should be able to pick up on this difference very easily, the CEDAR dataset is not a good test of an architecture's ability to understand or verfiy handwritten signatures.
 
@@ -74,38 +62,13 @@ Since CNNs are very powerful and should be able to pick up on this difference ve
     \label{fig:hist_pixel_values}
 \end{figure}
 
-Here's a genuine and a forge and we apply various epsilon values and also repeat...
-    There are diminising returns on continually nudging a forge.
+% If I need more content, I could graph the training loss and talk about how it stabilzes.
 
-Here's how well we trick SigNet...
+% the accuracy after \_ amount of training was 72% accuracy
+% It would take too long to get 100% accuracy
 
-Here's the same thing with 2 genuines of different signatures.
-
-Here's the same thing with 2 genuines of the same signature.
-
-
-If I need more content, I could graph the training loss and talk about how it stabilzes.
-
-the accuracy after \_ amount of training was 72% accuracy
-It would take too long to get 100% accuracy
-
-The validation loss was higher than the training loss even on the 1st epoch of training.
-I believe this is because the images in the datapoints (image pairs with labels) have been seen before...
+% The validation loss was higher than the training loss even on the 1st epoch of training.
+% I believe this is because the images in the datapoints (image pairs with labels) have been seen before...
 
 
-random noise can score well...
-
--------------------------------------------------
-
-There are pure 0s in the forge, but not the original...
-what if I add a bit of random noise to the forge?
-
-I wonder if making the pixels boolean would help or hurt signet/advarsary...
-
-
-
-
-
-WAT
-    scaling the input to the net doesn't seem to change its output (latent) vector
-    It that because it is doing some sort of normalization??
+% random noise can score well...

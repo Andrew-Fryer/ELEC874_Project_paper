@@ -130,7 +130,7 @@ These are mentioned in section \ref{sec:future_work}.
 % Assume that both genuine pair distance vectors and impostor pair distance vectors are Gaussian, and then compare probabilities (computed using Bayes Theorem and Gaussian distributions).
 % The comparison can simplified significantly like so:...
 
-\subsubsection{FGSM Attack}
+\subsubsection{FGSM Attack}\label{my_fgsm}
 A variation of the FGSM attack (described in section \ref{sec:fgsm}) is used to attack each SigNet model.
 Latent vectors for a genuine and forge signature are computed.
 The gradient of the loss with respect to the forge image is computed, similarly to FGSM, but instead of using the same loss function used in training, the magnitude of the distance between the latent vectors is used.

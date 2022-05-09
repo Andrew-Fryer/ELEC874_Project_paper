@@ -132,23 +132,17 @@ These are mentioned in section \ref{sec:future_work}.
 
 \subsubsection{FGSM Attack}\label{my_fgsm}
 A variation of the FGSM attack (described in section \ref{sec:fgsm}) is used to attack each SigNet model.
-Latent vectors for a genuine and forge signature are computed.
-The gradient of the loss with respect to the forge image is computed, similarly to FGSM, but instead of using the same loss function used in training, the magnitude of the distance between the latent vectors is used.
-Rather than taking the gradient of the loss function (as in FGSM), the gradient of the magni
-    actually, I do use the loss function...
-
-The magnitude of the distance between the latent vectors for a genuine and forge image is computed.
-The gradient of the magnitude is taken with respect to the forge image.
+Latent vectors for a genuine and forge signature are computed using the model.
+The gradient of the loss with respect to the forge image is computed, as in FGSM.
+(The loss function is computed as if the images are genuine, so the loss is the distance between the latent vectors where dimensions that differ by less than 1 pixel step are ignored.)
 The gradient is scaled by some constant $\epsilon$, producing a perturbation.
-The pertebation is then added to the forge image to produce a pertebed (improved) forge.
+The perturbation is then subtracted from the forge image to produce a perturbed (improved) forge.
+Assuming the model behaves somewhat linearly, the perturbed forge should result in a small loss, so its latent vector will be close to the genuine's latent vector, hopefully fooling the signature verfication system.
 
-WAIT, shouldn't we subtract it???
-
-In the original paper on FGSM, 0.007 is used as the $\epsilon$ value because it corresponds to a pertebation that is a rounding error when averaged over the image.
+In the original paper on FGSM, 0.007 is used as the $\epsilon$ value because it corresponds to a perturbation that is a rounding error when averaged over the image.
 More precisely, it is ``the magnitude of the smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers''\cite{goodfellow}.
 For this paper, 0.004 (roughly 1/256) was used becuase each pixel takes a grayscale value from 0 to 255.
-This $\epsilon$ value was used for all models because...
-I will use the same epsilon value for all the tests because Goodfellow says that it is the direction that matters and I want them to be apples to apples.
+This $\epsilon$ value was used for all models in an attempt to have an apples-to-apples comparison.
 
 I expiremented with applying multiple pertebations to the same forge and discovered that there are diminising returns.
 % I used eps=0.007 and got this:

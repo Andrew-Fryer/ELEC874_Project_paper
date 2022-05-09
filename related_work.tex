@@ -10,7 +10,7 @@ Not only is it computationally very expensive to train such a system to perform 
 Instead, a high-level representation of the image can be found that includes only the information needed to distinguish people.
 This is effectively dimensionality reduction that preserves only the information that is important for identifying people.
 The high-level representation is a vector in what is referred to as a latent space.
-(So, the dimensionality reduction should preserve/extract the structure of the person's face while discarding information about the background and the lighting conditions.)
+(So, the dimensionality reduction should extract the structure of the person's face while discarding information about the background and the lighting conditions.)
 
 This idea has a long history for face verification\cite{LeCun}, and has been used for signature verification much more recently\cite{sig_net}.
 
@@ -24,7 +24,7 @@ Early research in automated recognition of handwriting was motivated by the desi
 ``Off-line'' systems only need images of the handwriting, so they are more broadly applicable\cite{handwriting_survey}.
 
 Personal Digital Assistants (PDAs) incorporating on-line systems have been widely used commercially.
-These systems have used rule-based, statistical, and implicit methods\cite{handwriting_survey}, especially Hidden Markov Models and even convolutional neural networks\cite{389575} (while Yann LeCun's work was in its early stages\cite{mnist}).
+These systems have used rule-based, statistical, and implicit methods\cite{handwriting_survey}, especially Hidden Markov Models and even convolutional neural networks\cite{389575} (while Yann LeCun's foundational work was in its early stages\cite{mnist}).
 
 None of these methods have been accurate enough to be used commercially on cursive writing\cite{handwriting_survey}.
 As of 2000, on-line handwriting recognition was more accurate than off-line recognition because the chronological information is useful\cite{handwriting_survey}.

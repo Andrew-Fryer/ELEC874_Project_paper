@@ -51,6 +51,30 @@ All metrics are computed on the validation set.
     \label{table:2}
 \end{table*}
 
+Table \ref{table:3} shows the same metrics when a threshold is chosen by analyzing the validation set (as described in the SigNet paper and section \ref{sec:threshold}).
+Note that the threshold is not re-computed for the adversarial examples.
+\begin{table*}[t]
+    \centering
+    \begin{tabular}{|c | c >{\em}c | >{\em}c c | >{\bfseries}c | >{\em}c c >{\bfseries}c|}
+    % \begin{tabular}{|m{2.5cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm}|}
+        \hline
+        % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
+        % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
+        \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
+        \hline
+        & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
+        % \hline
+        & True & False & False & True & & False & True & \\
+        \hline
+        64 & 1380 & 23 & 0 & 1357 & 99.17 & 313 & 1067 & 88.66\\
+        128 & 1380 & 9 & 0 & 1371 & 99.67 & 296 & 1084 & 89.28\\
+        256 & 1380 & 5 & 0 & 1375 & 99.82 & 350 & 1030 & 87.32\\
+        \hline
+    \end{tabular}
+    \caption{Comparison of Leaky Accuracy using Latent Vector Sizes after 20 epochs}
+    \label{table:3}
+\end{table*}
+
 % If I need more content, I could graph the training loss and talk about how it stabilzes.
 
 % the accuracy after \_ amount of training was 72% accuracy

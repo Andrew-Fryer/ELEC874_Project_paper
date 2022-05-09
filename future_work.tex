@@ -1,11 +1,19 @@
 \section{Future Work}\label{sec:future_work}
 
-Round all the pixel values to 0/255 and redo training. (boolean)
-    This could make edges have different textures though...
+The most surprising conclusion in this paper is that the CEDAR dataset is not useful for evaluating a signature verfication system (see section \ref{sec:cedar_flaw}).
+The expirements in this paper could be reconducted on another dataset to properly evaulate the accuracy of SigNet variations.
+It may also be possible to transform the CEDAR dataset so that it is useful for our purposes.
+One approach is to set all pixels values to 0 or 255 using a threshold.
+This would eliminate much of the background noise that is present in the genuine signature images.
+However, this may also affect the smoothness of the edges of penstrokes, still enabling the model to learn to distinguish genuine signatures from forgeries without understanding human signatures.
 
-The latent vector size expirement should be repeated many times to try to get statistically significant results...
+One primary objective of the expirements conducted in this paper was to determine how the latent vector size affects accuracy and succecptability to attacks involving perturbations.
+To create more conclusive data, tables \ref{table:1} and \ref{table:2} should be recreated using random perturbations and using genuine signatures and noise in place of forged signatures.
+As stated in section \ref{sec:conclusion}, the accuracies on normal data are not very statistically significant.
+The models should be re-initialized and trained many times to produce enough accuracies to be sure of the conclusions made about latent vector size.
 
-Implement triplet loss on a SigNet-like network.
+The FaceNet paper reports impressive accuracy improvements using the triplet loss function.
+It would interesting to see how this would impact the quality of the latent space mapping for SigNet.
 
 Work has already been done in improving network's by training them an adversarial examples created using FGSM and similar methods.
 
@@ -48,6 +56,3 @@ f(y_{i}|\mu,\Sigma) & =\nonumber \\
 
 This can also be implemented to run quickly on the validation set by memoizing the latent vectors for the images.
 This should result in a large performance improvement because there are many more pairs of images than images in the validation set.
-
-If I didn't get to implementing a cool threshold I should talk about that here...
-TODO: talk about Gaussian threshold idea

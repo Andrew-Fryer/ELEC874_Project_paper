@@ -79,7 +79,7 @@ It was decided not to try using a triplet loss function for SigNet because it wo
 
 Expirements were conducted with the intent to validate the model as if it were used in a live production signature verification system, to understand how effective white-box [and black-box] attacks are, and to understand how latent vector size impacts the accuracy and robustness of the system.
 
-\subsubsection{Threshold Strategy}
+\subsubsection{Threshold Strategy}\label{sec:threshold}
 % This code was checked against the Keras implementation.
 
 The code in the Keras implementation computes accuracy as the SigNet paper describes.
@@ -88,7 +88,16 @@ This approach is useful for understanding the potential of the SigNet architectu
 However, the threshold is technically part of the classification system, information is leaked from the validation set.
 Therefore, the resulting accuracy does not technically demonstrate the accuracy that SigNet would have in the real world.
 
-In this paper, a threshold distance was instead computed from a sample of the training data by computing the median distance for a genuine pair and for an impostor pair.
+
+TODO: introduce names of accuracy strategies here... ``leaky accuracy'' and ``median accuracy''.
+This is reffered to as ``Leaky Accuracy'' because the threshold is leaked from the validation set into the signature verification system.
+
+
+In this paper, 
+to try to be more general...
+This approach is taken for this paper, but the leaky accuracy is also used to compare against.
+
+a threshold distance was instead computed from a sample of the training data by computing the median distance for a genuine pair and for an impostor pair.
 The average of these was then used as the threshold for evaluation.
 The thinking here is that the distances for genuine and for impostor are probably Gaussian (why don't I check???), so the halfway point between the medians is probably pretty good.
 
@@ -96,7 +105,6 @@ We can see that the data is very nicely seperated (for SigNet128 trained for 20 
 The threshold distance as done by the [leaky one] is: 0.0402.
 The threshold distance as done for the rest of this paper is: 0.0335.
 This is significantly different, but results in only a slightly higher accuracy (99.67\% compared to 99.49\%) because the data is very well seperated.
-% the accuracy is actually much better for the adversarial case, but I don't feel like writing about it
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{distance_histogram_signet_128.png}

@@ -1,6 +1,6 @@
 \section{Results}\label{sec:results}
 
-The main quantitave data can be seen in tables \ref{table:1} and \ref{table:2}.
+The main quantitative data can be seen in tables \ref{table:1} and \ref{table:2}.
 These present a number of metrics for each model that was trained.
 These are the number of true positives, false positives, false negatives, and true negatives, as well as accuracy (as computed in the SigNet paper\cite{sig_net}).
 Additionally, the number of false positives and true negatives and the accuracy are computed and included after the forged image in each of the negative datapoints is perturbed as described is section \ref{my_fgsm}.
@@ -10,14 +10,10 @@ All metrics are computed on the validation set.
 \begin{table*}[t]
     \centering
     \begin{tabular}{|c | c >{\em}c | >{\em}c c | >{\bfseries}c | >{\em}c c >{\bfseries}c|}
-    % \begin{tabular}{|m{2.5cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm}|}
         \hline
-        % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
-        % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
         \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
         \hline
         & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
-        % \hline
         & True & False & False & True & & False & True & \\
         \hline
         64 & 1106 & 279 & 274 & 1101 & 79.96 & 43 & 1337 & 88.51\\
@@ -32,14 +28,10 @@ All metrics are computed on the validation set.
 \begin{table*}[t]
     \centering
     \begin{tabular}{|c | c >{\em}c | >{\em}c c | >{\bfseries}c | >{\em}c c >{\bfseries}c|}
-    % \begin{tabular}{|m{2.5cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm}|}
         \hline
-        % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
-        % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
         \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
         \hline
         & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
-        % \hline
         & True & False & False & True & & False & True & \\
         \hline
         64 & 1347 & 0 & 33 & 1380 & 98.80 & 555 & 825 & 78.70\\
@@ -56,14 +48,10 @@ Note that the threshold is not re-computed for the adversarial examples.
 \begin{table*}[t]
     \centering
     \begin{tabular}{|c | c >{\em}c | >{\em}c c | >{\bfseries}c | >{\em}c c >{\bfseries}c|}
-    % \begin{tabular}{|m{2.5cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm} | m{1cm}|}
         \hline
-        % lvd & tp & fn & fp & tn & acc & fpi & tni & acci\\ [0.1ex]
-        % Dimensionality & true positive & false negative & false positive & true negative & accuracy & false positive imp & true negative imp & accuracy imp\\ [0.1ex]
         \multirow{3}{*}{Dimensionality} & \multicolumn{5}{c|}{Normal} & \multicolumn{3}{c|}{Adversarial}\\
         \hline
         & \multicolumn{2}{c|}{Positive} & \multicolumn{2}{c|}{Negative} & \multirow{2}{*}{Accuracy} & Positive & Negative & \multirow{2}{*}{Accuracy}\\
-        % \hline
         & True & False & False & True & & False & True & \\
         \hline
         64 & 1380 & 23 & 0 & 1357 & 99.17 & 313 & 1067 & 88.66\\
@@ -75,7 +63,7 @@ Note that the threshold is not re-computed for the adversarial examples.
     \label{table:3}
 \end{table*}
 
-% If I need more content, I could graph the training loss and talk about how it stabilzes.
+% If I need more content, I could graph the training loss and talk about how it stabilizes.
 
 % the accuracy after \_ amount of training was 72% accuracy
 % It would take too long to get 100% accuracy

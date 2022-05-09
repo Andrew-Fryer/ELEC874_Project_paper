@@ -15,18 +15,18 @@ Attack it using a technique similar to FGSM.
 For implementing the data preparation and SigNet architecture, 3 resources were used.
 An existing PyTorch implementation of SigNet, \cite{GitHub_signet_pytorch}, was used as a starting place.
 The SigNet paper, \cite{sig_net}, was used to check that the implementation was correct.
-For a few details, the paper was ambigious, so a Keras implementation, \cite{GitHub_sounakdey} which appears to be written by one of the paper's authors was used for clarification.
+For a few details, the paper was ambiguous, so a Keras implementation, \cite{GitHub_sounakdey} which appears to be written by one of the paper's authors was used for clarification.
 
 The existing PyTorch implementation was first restructured into a Jupyter Notebook so that it could be easily run on Google Colaboratory.
 
-The SigNet papers describes expirements on several datasets, but only achieves 100\% accuracy on the CEDAR dataset.
+The SigNet papers describes experiments on several datasets, but only achieves 100\% accuracy on the CEDAR dataset.
 For simplicity and reduced training time, only the CEDAR is used in this paper.
 % todo ref CEDAR
 
 The dataset was partitioned and prepared as described in the SigNet paper (which is very similar to \cite{LeCun}).
 
 The existing training process did not implement data normalization, so this was implemented as per the paper.
-The mean and standard deviation of the images in the training dataset was computed (after spliting the images in the CEDAR dataset into training and validation images and pairing images).
+The mean and standard deviation of the images in the training dataset was computed (after splitting the images in the CEDAR dataset into training and validation images and pairing images).
 All of the images in the dataset were then resized, transformed (inverted), and normalized according the paper's description and then saved back into png files for efficient loading of the data on subsequent runs.
 The png format was used rather than simply saving the tensors because png compression may perform better than the PyTorch (pt file) compression since png files are specific to images.
 
@@ -38,7 +38,7 @@ This is effective because there are many more training points (image pairs) than
 An error was found in the SigNet PyTorch implementation, fixed, and merged back into the codebase.
 % https://github.com/VinhLoiIT/signet-pytorch/pull/5
 
-Another small disrepency is in the initialization of model weights.
+Another small discrepancy is in the initialization of model weights.
 The SigNet paper says that weights are initialized ``according to the work
 of Glorot and Bengio \cite{glorot_bengio}, and the biases equal to 0''\cite{sig_net}.
 Instead of porting the Keras code to PyTorch, the default PyTorch initialization is used.
@@ -51,11 +51,11 @@ Instead of porting the Keras code to PyTorch, the default PyTorch initialization
 
 As discussed in section \ref{??}, the latent vector size is an interesting factor.
 To understand its importance [and effect/role], the size of SigNet's output was adjusted by modifying only the last layer.
-The resulting networks have a 64, 128 (unchanged), and 256 dimensional outputs and are later reffered to as SigNet64, SigNet128, and SigNet256.
+The resulting networks have a 64, 128 (unchanged), and 256 dimensional outputs and are later referred to as SigNet64, SigNet128, and SigNet256.
 
 \subsubsection{Training}
 Training was done on Google Colab (using "Colab Pro" with a "High RAM" and GPU runtime).
-Unfortuantely, weights from a trained SigNet model could not be found anywhere.
+Unfortunately, weights from a trained SigNet model could not be found anywhere.
 The training speed varied drastically, from approximately 10 minutes to 1 hour per 1000 datapoints.
 
 While the original SigNet is trained for 20 epochs, the models in this paper were all trained for 5 epochs due to time constraints (as the first training epoch that finished took over 24 hours to run).
@@ -72,12 +72,12 @@ At its best, training was able to do ~15 epochs in ~8 hours, which is 32 mins pe
 
 \subsubsection{Loss}
 The contrastive loss function is used exactly as in SigNet\cite{GitHub_sounakdey}.
-It was decided not to try using a triplet loss function for SigNet because it would be substantial work (mainly partiting the data and dynamically selecting image triplets intelligently) and it seems that triplet loss is mainly useful for modelling more complex data when large compute resources are available.
+It was decided not to try using a triplet loss function for SigNet because it would be substantial work (mainly partitioning the data and dynamically selecting image triplets intelligently) and it seems that triplet loss is mainly useful for modelling more complex data when large compute resources are available.
 
 
-\subsection{Expirements}
+\subsection{Experiments}
 
-Expirements were conducted with the intent to validate the model as if it were used in a live production signature verification system, to understand how effective white-box [and black-box] attacks are, and to understand how latent vector size impacts the accuracy and robustness of the system.
+Experiments were conducted with the intent to validate the model as if it were used in a live production signature verification system, to understand how effective white-box [and black-box] attacks are, and to understand how latent vector size impacts the accuracy and robustness of the system.
 
 \subsubsection{Threshold Strategy}\label{sec:threshold}
 % This code was checked against the Keras implementation.
@@ -90,7 +90,7 @@ Therefore, the resulting accuracy does not technically demonstrate the accuracy 
 
 
 TODO: introduce names of accuracy strategies here... ``leaky accuracy'' and ``median accuracy''.
-This is reffered to as ``Leaky Accuracy'' because the threshold is leaked from the validation set into the signature verification system.
+This is referred to as ``Leaky Accuracy'' because the threshold is leaked from the validation set into the signature verification system.
 
 
 In this paper, 
@@ -101,10 +101,10 @@ a threshold distance was instead computed from a sample of the training data by 
 The average of these was then used as the threshold for evaluation.
 The thinking here is that the distances for genuine and for impostor are probably Gaussian (why don't I check???), so the halfway point between the medians is probably pretty good.
 
-We can see that the data is very nicely seperated (for SigNet128 trained for 20 epochs).
+We can see that the data is very nicely separated (for SigNet128 trained for 20 epochs).
 The threshold distance as done by the [leaky one] is: 0.0402.
 The threshold distance as done for the rest of this paper is: 0.0335.
-This is significantly different, but results in only a slightly higher accuracy (99.67\% compared to 99.49\%) because the data is very well seperated.
+This is significantly different, but results in only a slightly higher accuracy (99.67\% compared to 99.49\%) because the data is very well separated.
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{distance_histogram_signet_128.png}
@@ -126,7 +126,7 @@ These are mentioned in section \ref{sec:future_work}.
 
 % compute mean and std\_dev of the distance between a matching and non-matching pair on a bunch of training points.
 
-% I think that what I should implement (also) is compute the mean and covariance (matices) of the genuine and forge data latent vectors over a bunch of training pairs. (To compute variance, I might need to store the latent vectors in CPU RAM and free the GPU RAM to avoid GPU OOM.)
+% I think that what I should implement (also) is compute the mean and covariance (matrices) of the genuine and forge data latent vectors over a bunch of training pairs. (To compute variance, I might need to store the latent vectors in CPU RAM and free the GPU RAM to avoid GPU OOM.)
 % I can also compute the confusion matrix using the simple threshold distance and my thing and discuss the performance differences.
 
 % Maybe I should also try what LeCun did with computing normal distribution for an individual and then using inverse FGSM (aka gradient descent on the input... could I use Pytorch optimizer and stuff for choosing a step value??? no!, don't bother)
@@ -146,14 +146,14 @@ The gradient of the loss with respect to the forge image is computed, as in FGSM
 (The loss function is computed as if the images are genuine, so the loss is the distance between the latent vectors where dimensions that differ by less than 1 pixel step are ignored.)
 The gradient is scaled by some constant $\epsilon$, producing a perturbation.
 The perturbation is then subtracted from the forge image to produce a perturbed (improved) forge.
-Assuming the model behaves somewhat linearly, the perturbed forge should result in a small loss, so its latent vector will be close to the genuine's latent vector, hopefully fooling the signature verfication system.
+Assuming the model behaves somewhat linearly, the perturbed forge should result in a small loss, so its latent vector will be close to the genuine's latent vector, hopefully fooling the signature verification system.
 
 In the original paper on FGSM, 0.007 is used as the $\epsilon$ value because it corresponds to a perturbation that is a rounding error when averaged over the image.
 More precisely, it is ``the magnitude of the smallest bit of an 8 bit image encoding after GoogLeNet's conversion to real numbers''\cite{goodfellow}.
-For this paper, 0.004 (roughly 1/256) was used becuase each pixel takes a grayscale value from 0 to 255.
+For this paper, 0.004 (roughly 1/256) was used because each pixel takes a grayscale value from 0 to 255.
 This $\epsilon$ value was used for all models in an attempt to have an apples-to-apples comparison.
 
-Figure \ref{fig:dist_vs_perts} shows how the distance between latent vectors decreases with succesive perturbations, re-computing the gradient each time.
+Figure \ref{fig:dist_vs_perts} shows how the distance between latent vectors decreases with successive perturbations, re-computing the gradient each time.
 It is evident that after approximately 4 perturbations the forge will not be distinguishable (using a simple distance metric) from the cluster of genuine signatures shown in figure \ref{fig:hist_distances}.
 % what about a gaussian threshold strategy?
 \begin{figure}[h]
@@ -164,8 +164,8 @@ It is evident that after approximately 4 perturbations the forge will not be dis
     \label{fig:dist_vs_perts}
 \end{figure}
 
-Figure \ref{fig:genuine} shows the genuine signature used for this expirement and figure \ref{fig:forge} shows the forge.
-There is a small, but noticable difference between the forge and the perturbed forge (shown in figure \ref{fig:improved_forge}), but all successive forges are indentical to the once perturbed forge to the human eye.
+Figure \ref{fig:genuine} shows the genuine signature used for this experiment and figure \ref{fig:forge} shows the forge.
+There is a small, but noticeable difference between the forge and the perturbed forge (shown in figure \ref{fig:improved_forge}), but all successive forges are identical to the once perturbed forge to the human eye.
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{original_1_1_transformed.png}
@@ -201,12 +201,12 @@ There is a small, but noticable difference between the forge and the perturbed f
 % From Goodfellow's work, I think it might make sense to try playing with latent vector size...?
 % Trained on 64, 128, and 256.
 % The model sizes are: \_, \_, and \_.
-% Training was way faster for the smaller models of course, but suprisingly so.
+% Training was way faster for the smaller models of course, but surprisingly so.
 % 1000 per hour vs. \_ vs. \_...
 
 % Training loss suggests that none of the models overfit.
 
-% smaller models more accuracate after one epoch, but also have many fewer parameters, so this could just mean that they are very underfit (we only did one epoch because training is so slow).
+% smaller models more accurate after one epoch, but also have many fewer parameters, so this could just mean that they are very underfit (we only did one epoch because training is so slow).
 % Training is very slow for SigNet256.
 % (I should introduce the names "SigNet64,128,256" earlier.)
 
@@ -218,21 +218,21 @@ There is a small, but noticable difference between the forge and the perturbed f
 
 % \section{just notes lol}
 % I want to compute my metric of thresholds and prove hopefully prove that results in better accuracy than just optimizing the threshold (by trying all distances) on the training data.
-% I want to compute a confusion matrix for the 3 models and then recompute it after applying pertebations.
+% I want to compute a confusion matrix for the 3 models and then recompute it after applying perturbations.
 
 % Hey, does DeepFool do what I'm talking about?
 %     I should give it another glance before implementing...
 
-% With any luck, I'll have results that say which latent vector size is best for accuracy and robustenss to FGSM-like attacks.
+% With any luck, I'll have results that say which latent vector size is best for accuracy and robustness to FGSM-like attacks.
 
 
-% One interesting problem I ran into was I once manually saved a model just a batch or 2 after it call scheduler.step() (think it what caused it) and it performed much worse than I expected because the optimizer had made large changes... (I realized this becuase the val\_loss jumped up...)
+% One interesting problem I ran into was I once manually saved a model just a batch or 2 after it call scheduler.step() (think it what caused it) and it performed much worse than I expected because the optimizer had made large changes... (I realized this because the val\_loss jumped up...)
 
 \subsection{Discovery About CEDAR Dataset}\label{sec:cedar_flaw}
 The images in the CEDAR dataset appear quite reasonable to the naked eye until they are inverted (so that black becomes white and vice versa).
 There is an obvious difference in the background of the image of the genuine signature \ref{fig:genuine} when compared to that of the forged signature \ref{fig:forge}.
 
-This was noticed early on during the research for this paper, but was not scruntinized until after all of the expirements had been performed and the bulk of the paper had been written.
+This was noticed early on during the research for this paper, but was not scrutinized until after all of the experiments had been performed and the bulk of the paper had been written.
 The validation set images were analyzed as they are presented to the model: normalized, resized, and inverted.
 The images were binned and then the bins were averaged over all of the images.
 The resulting histogram can be seen in figure \ref{fig:hist_pixel_values}.
@@ -245,7 +245,7 @@ The resulting histogram can be seen in figure \ref{fig:hist_pixel_values}.
     \label{fig:hist_pixel_values}
 \end{figure}
 
-This clearly shows that the images of genuine sigantures have significantly different heuristics compared to the forged signatures.
+This clearly shows that the images of genuine signatures have significantly different heuristics compared to the forged signatures.
 In particular, the forged signatures have very few pixels with values in between 1 and 254, while the genuine signatures have many more.
 
 With this realization, a very simple classifier was designed that examines an image and outputs whether or not there are more than 2000 pixels in it that have values in between 1 and 254.

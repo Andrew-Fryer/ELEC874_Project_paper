@@ -1,13 +1,13 @@
 \section{Future Work}\label{sec:future_work}
 
-The most surprising conclusion in this paper is that the CEDAR dataset is not useful for evaluating a signature verfication system (see section \ref{sec:cedar_flaw}).
-The expirements in this paper could be reconducted on another dataset to properly evaulate the accuracy of SigNet variations.
+The most surprising conclusion in this paper is that the CEDAR dataset is not useful for evaluating a signature verification system (see section \ref{sec:cedar_flaw}).
+The experiments in this paper could be re-conducted on another dataset to properly evaluate the accuracy of SigNet variations.
 It may also be possible to transform the CEDAR dataset so that it is useful for our purposes.
 One approach is to set all pixels values to 0 or 255 using a threshold.
 This would eliminate much of the background noise that is present in the genuine signature images.
 However, this may also affect the smoothness of the edges of penstrokes, still enabling the model to learn to distinguish genuine signatures from forgeries without understanding human signatures.
 
-One primary objective of the expirements conducted in this paper was to determine how the latent vector size affects accuracy and succecptability to attacks involving perturbations.
+One primary objective of the experiments conducted in this paper was to determine how the latent vector size affects accuracy and susceptibility to attacks involving perturbations.
 To create more conclusive data, tables \ref{table:1} and \ref{table:2} should be recreated using random perturbations and using genuine signatures and noise in place of forged signatures.
 As stated in section \ref{sec:conclusion}, the accuracies on normal data are not very statistically significant.
 The models should be re-initialized and trained many times to produce enough accuracies to be sure of the conclusions made about latent vector size.
@@ -35,7 +35,7 @@ Instead, we could compute a distribution for all genuine signatures.
 Their approach makes sense, but it may be advantageous to eliminate the need to pick a threshold.
 An alternate way to compute the probability that a point belongs to the impostor class is to make a somewhat crude assumption that the impostor class is also Gaussian.
 
-The formula for deciding whether or not a point $x$ (difference between latent vectors) should be classified as geuine is given and reduced in figure \ref{proof:gaussian}.
+The formula for deciding whether or not a point $x$ (difference between latent vectors) should be classified as genuine is given and reduced in figure \ref{proof:gaussian}.
 The $<$ symbol is the computer science ``less than'' comparison operator rather than denoting an inequality, and $g$ is for ``genuine'' and $i$ is for ``impostor''.
 
 \begin{figure}

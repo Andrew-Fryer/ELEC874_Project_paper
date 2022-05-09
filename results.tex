@@ -61,6 +61,19 @@ Here's a table of the accuracy (true/false positive/negative matix).
     \label{table:2}
 \end{table*}
 
+
+
+As mentioned in section \ref{sec:cedar_flaw}, there is at least one significant difference between the genuine and forge images in the CEDAR dataset.
+Since CNNs are very powerful and should be able to pick up on this difference very easily, the CEDAR dataset is not a good test of an architecture's ability to understand or verfiy handwritten signatures.
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{mean_hist.png}
+    \end{center}
+    \caption{Histogram of Means of Binned Pixel Values}
+    \label{fig:hist_pixel_values}
+\end{figure}
+
 Here's a genuine and a forge and we apply various epsilon values and also repeat...
     There are diminising returns on continually nudging a forge.
 

@@ -101,7 +101,7 @@ This is significantly different, but results in only a slightly higher accuracy 
         \includegraphics[width=0.8\linewidth]{distance_histogram_signet_128.png}
     \end{center}
     \caption{Histogram of Distances of Validation Set for SigNet128}
-    \label{fig:histogram}
+    \label{fig:hist_distances}
 \end{figure}
 
 Can't use LeCun's method because that requires several images of the genuine... (they use 5..)
@@ -183,14 +183,14 @@ I expiremented with applying multiple pertebations to the same forge and discove
     \label{fig:improved_forge}
 \end{figure}
 
-It appeared that the forge was just adding noise, as the genuine is noisy...
-So, I did this:
-$improved_forge[improved_forge < 1.0e-06] = 0.0$
-...and got this:
-0.06897393614053726
-which is just marginally more than the distance for genuine improved\_forge
-(so this background noise wasn't really helping that much)
-(maybe I should count how many elements were zeroed...)
+% It appeared that the forge was just adding noise, as the genuine is noisy...
+% So, I did this:
+% $improved_forge[improved_forge < 1.0e-06] = 0.0$
+% ...and got this:
+% 0.06897393614053726
+% which is just marginally more than the distance for genuine improved\_forge
+% (so this background noise wasn't really helping that much)
+% (maybe I should count how many elements were zeroed...)
 
 % \subsubsection{Latent Vector Size}
 % From Goodfellow's work, I think it might make sense to try playing with latent vector size...?
@@ -222,3 +222,21 @@ which is just marginally more than the distance for genuine improved\_forge
 
 
 % One interesting problem I ran into was I once manually saved a model just a batch or 2 after it call scheduler.step() (think it what caused it) and it performed much worse than I expected because the optimizer had made large changes... (I realized this becuase the val\_loss jumped up...)
+
+\subsection{Discovery About CEDAR Dataset}\label{sec:cedar_flaw}
+The images in the CEDAR dataset appear quite reasonable to the naked eye until they are inverted (so that black becomes white and vice versa).
+There is an obvious difference in the background of the image of the genuine signature \ref{fig:genuine} when compared to that of the forged signature \ref{fig:forge}.
+
+This was noticed early on during the research for this paper, but was not scruntinized until after all of the expirements had been performed and the bulk of the paper had been written.
+The validation set images were analyzed as they are presented to the model: normalized, resized, and inverted.
+The images were binned and then the bins were averaged over all of the images.
+The resulting histogram can be seen in figure \ref{fig:hist_pixel_values}.
+This clearly shows that the images of genuine sigantures have significantly different heuristics compared to the forged signatures.
+In particular, the forged signatures have very few pixels with values in between 1 and 254, while the genuine signatures have many more.
+
+With this realization, a very simple classifier was designed that examines an image and outputs whether or not there are more than 2000 pixels in it that have values in between 1 and 254.
+This classifier was tested on the validation set and achieves 100\% accuracy.
+While the threshold value (2000) was determined from the validation, the classify also achieves 100\% accuracy when the threshold is set to 5000, so any value in that range will suffice.
+
+Upon very closely inspecting the original images in the CEDAR dataset, it can be seen that the genuine and forged images are in fact different in this way.
+Perhaps a different system was used for scanning the genuine and forged signatures.

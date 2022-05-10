@@ -4,41 +4,40 @@ As mentioned in section \ref{sec:cedar_flaw}, there is at least one significant 
 Since CNNs are very powerful and should be able to pick up on this difference very easily, the CEDAR dataset is not a good test of an architecture's ability to understand or verify handwritten signatures.
 For example, the CNN would achieve a very low loss by simply mapping all genuine images to one point and all forgeries to anywhere that is far away.
 
-As discussed in section \ref{sec:my_fgsm}, it is evident from figures \ref{dist_vs_perts} and \ref{hist_distances} that perturbations hardly noticeable to the human eye are capable of fooling any system that relies on a distance metric.
-While training on adversarial examples can improve a model's robustness to them \ref{goodfellow}, it is conjectured that there is no way to make signature verification system that consists of an end-to-end CNN and a threshold function immune to FGSM attacks.
+While training on adversarial examples can improve a model's robustness to them \cite{goodfellow}, it is conjectured that there is no way to make a signature verification system that consists of an end-to-end CNN and a threshold function immune to FGSM attacks.
+As discussed in section \ref{sec:my_fgsm}, it is evident from figures \ref{fig:dist_vs_perts} and \ref{fig:hist_distances} that perturbations can reduce the distance between latent vectors enough to make forgeries that are indistinguishable from genuine signatures with regards to a the distance between latent vectors.
+Therefore, any such signature verification system that uses a threshold on the distance is vulnerable to FGSM attacks.
+Experimenting with more complex threshold functions is left as future work.
 % Applying sufficient successive perturbations results all forges fooling the model. <- I would love to try this and then be able to say it!
 
 The effect of these attacks can be seen in tables \ref{table:1} and \ref{table:2}.
 A strange phenomenon appears in the accuracies of the normal vs. adversarial tests.
 It is intuitive that the normal accuracy is improved from training for 5 epochs to 20 epochs (especially because dropout is used).
-Since these accuracies come from the validation set, this does not seem to be from over-fitting.
+Since these accuracies come from the validation set, this does not seem to be from overfitting.
 However, the accuracy computed on the adversarial validation set is worse for the models that have been trained longer.
-The cause of this is not known, but I speculate that it is because dropout has increases the linearity of the models.
+The cause of this is not known, but we speculate that it is because dropout has increased the linearity of the models.
 Dropout encourages the model to build redundant information pathways through the layers.
 These pathways might allow the FGSM attack to be more effective.
 This seems plausible, especially since dropout is known not to ``confer a significant reduction in a model's vulnerability to adversarial examples''\cite{goodfellow}.
 
 As for the dimensionality of the models, it seems that larger latent vectors are slightly better suited to prediction and slightly worse suited to resistance against adversarial attacks.
-We think that this is because larger latent vectors allow the model to more easily cluster images that are different and also allow FGSM to move the latent vector more freely.
+We think that this is because larger latent vectors allow the model to more easily cluster signatures and also give more possible directions for FGSM to move the latent vector.
 % mention models sizes here?
 More tests would be needed to collect statistically significant data.
 
 The leaky accuracy is not significantly better than the median accuracy on the normal data.
-This makes sense because the accuracies are so high that there is not much room for variations.
+This makes sense because the accuracies are so high that there is not much room for variation.
+% the choice of threshold strategy does not have a significant impact on performance because the data is well separated (as seen in figure \ref{fig:hist_distances}).
 However, the leaky accuracies are significantly higher than their median accuracy counterparts.
-Since the leaky accuracy does not have knowledge of the perturbed images, it seems that the method of computing the leaky accuracy does indeed generalize well across different data (contrary to speculation in section \ref{sec:threshold}).
+Since the leaky accuracy does not have knowledge of the perturbed images, it seems that the method of computing the leaky accuracy does indeed generalize well across different data (contrary to our speculation in section \ref{sec:threshold}).
 Therefore, it seems the median threshold strategy is generally less accurate than the leaky accuracy.
-(To be sure, the optimal threshold for the training data could be found and used on the validation data.)
+(To be sure, the optimal threshold for the training data could be found and then used on the validation data.)
 
 The impressive accuracies (on the non-adversarial data) do not demonstrate that SigNet is capable performing signature verification accurately.
-Likewise, SigNet's 100\% on the CEDAR dataset recorded in the SigNet paper should not be taken too seriously.
-First, the CEDAR dataset contains differences between the genuine and forged images.
-Second, the threshold distance used in the SigNet paper is computed on the validation set, which technically leaks information from the validation set, theoretically allowing the system to perform better than if it were computed on the training set.
-However, they also use other datasets, so I have not disproved that SigNet is impressive.
+Likewise, SigNet's 100\% accuracy on the CEDAR dataset recorded in the SigNet paper should not be taken too seriously.
+First, the threshold distance used in the SigNet paper is computed on the validation set, which technically leaks information from the validation set, theoretically allowing the system to perform better than if it were computed on the training set.
+Second, the CEDAR dataset contains differences between the genuine and forged images.
+However, they also use other datasets, so we have certainly not proved that SigNet is incapable of accurate signature verification.
 In fact, they have some success when validating on a different dataset than the model was trained on\cite{sig_net}.
-
-In this case, the choice of threshold strategy does not have a significant impact on performance because the data is well separated (as seen in figure \ref{fig:hist_distances}).
-After applying perturbations, the data is not well separated, but a distance metric alone is not sufficient to separate it.
-
 
 % swapping out networks shows/disproves that a black box attack is nearly as effective as a white-box attack.

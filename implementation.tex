@@ -131,11 +131,11 @@ The ``leaky'' threshold is significantly different, but results in the system ac
 % Assume that both genuine pair distance vectors and impostor pair distance vectors are Gaussian, and then compare probabilities (computed using Bayes Theorem and Gaussian distributions).
 % The comparison can simplified significantly like so:...
 
-\subsubsection{FGSM Attack}\label{my_fgsm}
+\subsubsection{FGSM Attack}\label{sec:my_fgsm}
 A variation of the FGSM attack (described in section \ref{sec:fgsm}) is used to attack each SigNet model.
 Latent vectors for a genuine and forge signature are computed using the model.
 The gradient of the loss with respect to the forge image is computed, as in FGSM.
-(The loss function is computed as if the images are genuine, so the loss is the distance between the latent vectors where dimensions that differ by less than 1 pixel step are ignored.)
+The loss function is computed as if the images are genuine, so the loss is the distance between the latent vectors (where dimensions that differ by less than 1 pixel step are ignored).
 The gradient is scaled by some constant $\epsilon$, producing a perturbation.
 The perturbation is then subtracted from the forge image to produce a perturbed (improved) forge.
 Assuming the model behaves somewhat linearly, the perturbed forge should result in a small loss, so its latent vector will be close to the genuine's latent vector, hopefully fooling the signature verification system.
@@ -225,6 +225,7 @@ The images in the CEDAR dataset appear quite reasonable to the naked eye until t
 There is an obvious difference in the background of the image of the genuine signature \ref{fig:genuine} when compared to that of the forged signature \ref{fig:forge}.
 
 This was noticed early on during the research for this paper, but was not scrutinized until after all of the experiments had been performed and the bulk of the paper had been written.
+
 The validation set images were analyzed as they are presented to the model: normalized, resized, and inverted.
 The images were binned and then the bins were averaged over all of the images.
 The resulting histogram can be seen in figure \ref{fig:hist_pixel_values}.
@@ -242,7 +243,7 @@ In particular, the forged signatures have very few pixels with values in between
 
 With this realization, a very simple classifier was designed that examines an image and outputs whether or not there are more than 2000 pixels in it that have values in between 1 and 254.
 This classifier was tested on the validation set and achieves 100\% accuracy.
-While the threshold value (2000) was determined from the validation, the classify also achieves 100\% accuracy when the threshold is set to 5000, so any value in that range will suffice.
+While the threshold value (2000) was determined from the validation, the classifier also achieves 100\% accuracy when the threshold is set to 5000, so any value in that range will suffice.
 
 Upon very closely inspecting the original images in the CEDAR dataset, it can be seen that the genuine and forged images are in fact different in this way.
 Perhaps a different system was used for scanning the genuine and forged signatures.

@@ -2,9 +2,10 @@
 
 The main quantitative data can be seen in tables \ref{table:1} and \ref{table:2}.
 These present a number of metrics for each model that was trained.
-These are the number of true positives, false positives, false negatives, and true negatives, as well as accuracy (as computed in the SigNet paper\cite{sig_net}).
+These are the number of true positives, false positives, false negatives, and true negatives, as well as accuracy.
 Additionally, the number of false positives and true negatives and the accuracy are computed and included after the forged image in each of the negative datapoints is perturbed as described is section \ref{my_fgsm}.
-These metrics are shown for the 3 models (SigNet64, SigNet128, and SigNet256) which have dimensionality 64, 128, and 256 of their outputs (latent vectors).
+These metrics are shown for the 3 models (SigNet64, SigNet128, and SigNet256) after being trained for 5 and 20 epochs.
+Table \ref{table:3} is the same as table \ref{table:2} except that the ``leaky'' threshold distance is used instead of the ``median'' threshold distance.
 All metrics are computed on the validation set.
 
 \begin{table*}[t]

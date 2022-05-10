@@ -75,7 +75,7 @@ Then, either another genuine or a forge is sent through the network.
 The resulting latent vectors are compared using Euclidean distance.
 % [have I described partitioning yet?]
 After computing the latent vector distances for all image pairs in the validation set, the threshold that results in the best accuracy is picked.
-This results in 100\% accuracy on the CEDAR dataset, which contains skilled forgeries.
+This results in 100\% accuracy on the CEDAR \footnote{Available at http://www.cedar.buffalo.edu/NIJ/data/signatures.rar} dataset, which contains skilled forgeries.
 
 The SigNet paper does not explain the decision to use contrastive loss over triplet loss.
 Since signature verification is simpler than face verification (and SigNet is much smaller and was trained for far less time than FaceNet), is seems that contrastive loss was used because it is much simpler to implement and has fewer hyper-parameters\cite{sig_net}\cite{face_net}.

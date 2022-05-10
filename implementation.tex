@@ -16,6 +16,8 @@ This idea has a long history for face verification\cite{LeCun}, and has been use
 
 We will start with the SigNet architecture, modify it in several ways, and then test its accuracy on skilled forges (handwritten forges by humans) and the same forges after modifying them using FGSM.
 
+All code can is available online\footnote{https://github.com/Andrew-Fryer/signet-pytorch/blob/master/ELEC\_874\_Project.ipynb}.
+
 
 \subsection{Procedure}
 
@@ -98,7 +100,7 @@ In this paper, the median distance for a genuine pair and for an impostor pair i
 The midpoint between the 2 medians is then used as the threshold distance.
 The rationale for this over computing the optimal threshold for a sample of the training data is that it would hopefully generalize over the data better.
 
-In figure \ref{fig:hist_distance} we can see that the data is very nicely separated (for SigNet128 trained for 20 epochs).
+In figure \ref{fig:hist_distances} we can see that the data is very nicely separated (for SigNet128 trained for 20 epochs).
 The ``median'' threshold distance is 0.0335 and the ``leaky'' threshold distance is 0.0402.
 The ``leaky'' threshold is significantly different, but results in the system achieving only a slightly higher accuracy (99.67\% compared to 99.49\%) because the data is very well separated.
 \begin{figure}[h]

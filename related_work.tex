@@ -1,20 +1,6 @@
 \section{Related Work}\label{sec:related_work}
 
 
-\subsection{General Strategy}
-
-Signature verification could be done by training a Convolutional Neural Network (CNN) to output whether or not the input image is of the chosen person.
-However, this requires a new network to be trained for each person that the system needs to perform verification for.
-Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires many signatures by the person for training.
-
-Instead, a high-level representation of the image can be found that includes only the information needed to distinguish people.
-This is effectively dimensionality reduction that preserves only the information that is important for identifying people.
-The high-level representation is a vector in what is referred to as a latent space.
-(So, the dimensionality reduction should extract the structure of the person's face while discarding information about the background and the lighting conditions.)
-
-This idea has a long history for face verification\cite{LeCun}, and has been used for signature verification much more recently\cite{sig_net}.
-
-
 \subsection{Handwriting Recognition} % remove if I'm out of space...
 
 ``In numerous situations, a pen together with paper or a small notepad is more convenient that a keyboard''\cite{handwriting_survey}.
@@ -56,12 +42,12 @@ This loss function penalizes distance between genuine pairs and encourages dista
 
 The distribution of the latent vectors for images of each person is assumed to be Gaussian.
 This distribution is computed for each person using the first five images of them.
-Verification on a new image is performed by comparing the probabilities of that the image's latent vector is genuine vs. an impostor given the Gaussian distributions\cite{LeCun}.
+Verification on a new image is performed by comparing the probability that the image's latent vector is genuine vs. an impostor given the Gaussian distribution for the given person\cite{LeCun}.
 
 
 \subsection{FaceNet and Triplet Loss} % remove this if I run out of space
 
-FaceNet (\cite{triple_loss}) presents ``triplet loss'' an alternative to contrastive loss that allows datapoints with the same label to happily live in multiple clusters.
+FaceNet (\cite{triple_loss}) presents ``triplet loss'', an alternative to contrastive loss that allows datapoints with the same label to live in multiple clusters without being penalized.
 While training with contrastive loss operates on pairs of images, triplet loss uses two matching images and one impostor, and ``encourages a relative distance constraint''\cite{face_net}.
 
 Using this loss function, FaceNet was built off of LeCun's work (discussed in section \ref{sec:contrastive_loss}) and achieved very impressive results\cite{face_net}.
@@ -70,9 +56,9 @@ Although FaceNet does aim for each person's latent vectors to be in one cluster,
 There are several other, more subtle differences between FaceNet and LeCun's work in 2005.
 FaceNet does not consider true negatives when training because the network already knows the images are of different people, so it is not productive to adjust the weight of the network as the direction of the gradient is somewhat arbitrary.
 % [Maybe I should try that...]
+
 Instead of computing Gaussian distributions, a simple distance threshold is used for deciding if two latent vectors match.
 (The paper does not seem to explain how the threshold is computed.)
-They just use a cut off threshold for computing accuracy.
 
 The FaceNet creators also conclude from their experiments that using latent vectors larger than 128 dimensions does not result in significant improvements in model accuracy\cite{face_net}.
 % say thing about being able to compress to 128 bytes?
@@ -89,21 +75,21 @@ Then, either another genuine or a forge is sent through the network.
 The resulting latent vectors are compared using Euclidean distance.
 % [have I described partitioning yet?]
 After computing the latent vector distances for all image pairs in the validation set, the threshold that results in the best accuracy is picked.
-This results in 100\% accuracy on the CEDAR dataset, which contains skilled forges.
+This results in 100\% accuracy on the CEDAR dataset, which contains skilled forgeries.
 
 The SigNet paper does not explain the decision to use contrastive loss over triplet loss.
-Since signature verification is simpler than face verification (and SigNet was trained for far less time than FaceNet), is seems that contrastive loss was used because it is much simpler to implement and has fewer hyper-parameters.
+Since signature verification is simpler than face verification (and SigNet is much smaller and was trained for far less time than FaceNet), is seems that contrastive loss was used because it is much simpler to implement and has fewer hyper-parameters\cite{sig_net}\cite{face_net}.
 
 
 \subsection{FGSM}\label{sec:fgsm}
 
-It is established that state-of-the-art deep neural networks are unstable to small, well sought, perturbations of their inputs\cite{deep_fool}.
+It is known that state-of-the-art deep neural networks are unstable to small, well sought, perturbations of their inputs\cite{deep_fool}.
 
-Ian Goodfellow (famous for his development of GANs) has proven that even linear models are susceptible to adversarial attacks consisting of minute perturbations if their dimensionality is large enough\cite{goodfellow}.
+Ian Goodfellow (famous for his development of generative adversarial networks) has proven that even linear models are susceptible to adversarial attacks consisting of minute perturbations if their dimensionality is large enough\cite{goodfellow}.
 
 This is interesting in the topic of signature verification because adversarial attacks could pose a security threat if such verification systems were used in the future.
 
-Fast Gradient Sign Method (FGSM) is a technique for generating adversarial inputs for models.
+Fast Gradient Sign Method (FGSM) is a technique for generating adversarial inputs for models\cite{goodfellow}.
 An existing input is sent through the model and then the gradient of the loss is taken with respect to the input.
 The input is then perturbed in the opposite direction of the gradient by some distance epsilon.
 This produces a new (perturbed) input that is very similar to the original, but produces a very different output.

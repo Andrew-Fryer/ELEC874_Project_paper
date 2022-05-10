@@ -2,12 +2,19 @@
 
 
 \subsection{General Strategy}
-% todo: move related work section here and integrate
 
-Take Signet.
-Try different latent vector sizes.
-Attack it using a technique similar to FGSM.
-[Try to improve SigNet's resilience to the attack.]
+Signature verification could be done by training a Convolutional Neural Network (CNN) to output whether or not the input image is of the chosen person.
+However, this requires a new network to be trained for each person that the system needs to perform verification for.
+Not only is it computationally very expensive to train such a system to perform verification for many people, but also requires many signatures by the person for training.
+
+Instead, a high-level representation of the image can be found that includes only the information needed to distinguish people.
+This is effectively dimensionality reduction that preserves only the information that is important for identifying people.
+The high-level representation is a vector in what is referred to as a latent space.
+(So, the dimensionality reduction should extract the structure of the person's face while discarding information about the background and the lighting conditions.)
+
+This idea has a long history for face verification\cite{LeCun}, and has been used for signature verification much more recently in SigNet\cite{sig_net}.
+
+We will start with the SigNet architecture, modify it in several ways, and then test its accuracy on skilled forges (handwritten forges by humans) and the same forges after modifying them using FGSM.
 
 
 \subsection{Procedure}
@@ -35,13 +42,14 @@ Rather than reading image data from disk, the dataloader simply indexes an array
 This is effective because there are many more training points (image pairs) than images, and it is feasible because the total uncompressed data in the images after they are resized is approximately 82 MB (2400 images of size 155 by 220 with pixels in range 0 to 255).
 
 \subsubsection{Deviations from SigNet}
-An error was found in the SigNet PyTorch implementation, fixed, and merged back into the codebase.
-% https://github.com/VinhLoiIT/signet-pytorch/pull/5
+An error was found in the SigNet PyTorch implementation, fixed, and merged back into the codebase (\url{https://github.com/VinhLoiIT/signet-pytorch/pull/5}).
 
-Another small discrepancy is in the initialization of model weights.
+One discrepancy between SigNet and our implementation is the initialization of model weights.
 The SigNet paper says that weights are initialized ``according to the work
 of Glorot and Bengio \cite{glorot_bengio}, and the biases equal to 0''\cite{sig_net}.
 Instead of porting the Keras code to PyTorch, the default PyTorch initialization is used.
+The purpose of the weight initialization is to reduce convergence time.
+Since the models converged quickly (the larger models perform better after only 5 epochs), this should invalidate results of experiments.
 % this was largely to avoid re-running training, which took a long time
 % dang, that paper says "we propose a new initialization scheme that brings substantially faster convergence"
 % The models converged quickly, so this seems to be okay.
@@ -49,35 +57,32 @@ Instead of porting the Keras code to PyTorch, the default PyTorch initialization
 % All of the hyper-parameters are chosen to be the same as SigNet.
 % except batch size, which is set to 1...
 
-As discussed in section \ref{??}, the latent vector size is an interesting factor.
-To understand its importance [and effect/role], the size of SigNet's output was adjusted by modifying only the last layer.
-The resulting networks have a 64, 128 (unchanged), and 256 dimensional outputs and are later referred to as SigNet64, SigNet128, and SigNet256.
+We speculate that the the latent vector size is an interesting factor for an ablation study.
+To understand its importance, the size of SigNet's output was adjusted by modifying only the last layer.
+The resulting networks have a 64, 128 (unchanged), and 256 dimensional outputs and are later referred to as SigNet64, SigNet128, and SigNet256, respectively.
 
 \subsubsection{Training}
 Training was done on Google Colab (using "Colab Pro" with a "High RAM" and GPU runtime).
 Unfortunately, weights from a trained SigNet model could not be found anywhere.
-The training speed varied drastically, from approximately 10 minutes to 1 hour per 1000 datapoints.
+The training speed varied drastically, from approximately 32 minutes to 22 hours per epoch.
 
-While the original SigNet is trained for 20 epochs, the models in this paper were all trained for 5 epochs due to time constraints (as the first training epoch that finished took over 24 hours to run).
-It seems that 5 epochs was sufficient because the training and validation losses after the first epoch are indistinguishable from those after future epochs.
+% batch size was set to 1 to avoid OOMs.
+% I think this does impact the training process because of some normalization process during training...
 
-batch size was set to 1 to avoid OOMs.
-I think this does impact the training process because of some normalization process during training...
-
-Several things slowed down training considerably.
-Having GPU RAM maxed out (I think).
-Initially, (with GPU RAM maxed out and not on a "High RAM" runtime) training an epoch took over 24 hours.
-At its best, training was able to do ~15 epochs in ~8 hours, which is 32 mins per epoch.
+% Several things slowed down training considerably.
+% Having GPU RAM maxed out (I think).
+% Initially, (with GPU RAM maxed out and not on a "High RAM" runtime) training an epoch took over 24 hours.
+% At its best, training was able to do ~15 epochs in ~8 hours, which is 32 mins per epoch.
 
 
-\subsubsection{Loss}
+% \subsubsection{Loss}
 The contrastive loss function is used exactly as in SigNet\cite{GitHub_sounakdey}.
-It was decided not to try using a triplet loss function for SigNet because it would be substantial work (mainly partitioning the data and dynamically selecting image triplets intelligently) and it seems that triplet loss is mainly useful for modelling more complex data when large compute resources are available.
+% It was decided not to try using a triplet loss function for SigNet because it would be substantial work (mainly partitioning the data and dynamically selecting image triplets intelligently) and it seems that triplet loss is mainly useful for modelling more complex data when large compute resources are available.
 
 
 \subsection{Experiments}
 
-Experiments were conducted with the intent to validate the model as if it were used in a live production signature verification system, to understand how effective white-box [and black-box] attacks are, and to understand how latent vector size impacts the accuracy and robustness of the system.
+Experiments were conducted with the intent to validate the model as if it were used in a signature verification system, to understand how effective white-box attacks are, and to understand how latent vector size impacts the accuracy and robustness of the system.
 
 \subsubsection{Threshold Strategy}\label{sec:threshold}
 % This code was checked against the Keras implementation.
@@ -85,26 +90,17 @@ Experiments were conducted with the intent to validate the model as if it were u
 The code in the Keras implementation computes accuracy as the SigNet paper describes.
 As mentioned in section \ref{sec:sig_net}, a threshold is selected by examining the validation set (and choosing the optimal threshold).
 This approach is useful for understanding the potential of the SigNet architecture.
-However, the threshold is technically part of the classification system, information is leaked from the validation set.
+However, since the threshold is technically part of the classification system, information is leaked from the validation set.
+As such, this threshold strategy is later referred to as being ``leaky''.
 Therefore, the resulting accuracy does not technically demonstrate the accuracy that SigNet would have in the real world.
 
+In this paper, the median distance for a genuine pair and for an impostor pair is computed on a sample of the training set.
+The midpoint between the 2 medians is then used as the threshold distance.
+The rationale for this over computing the optimal threshold for a sample of the training data is that it would hopefully generalize over the data better.
 
-TODO: introduce names of accuracy strategies here... ``leaky accuracy'' and ``median accuracy''.
-This is referred to as ``Leaky Accuracy'' because the threshold is leaked from the validation set into the signature verification system.
-
-
-In this paper, 
-to try to be more general...
-This approach is taken for this paper, but the leaky accuracy is also used to compare against.
-
-a threshold distance was instead computed from a sample of the training data by computing the median distance for a genuine pair and for an impostor pair.
-The average of these was then used as the threshold for evaluation.
-The thinking here is that the distances for genuine and for impostor are probably Gaussian (why don't I check???), so the halfway point between the medians is probably pretty good.
-
-We can see that the data is very nicely separated (for SigNet128 trained for 20 epochs).
-The threshold distance as done by the [leaky one] is: 0.0402.
-The threshold distance as done for the rest of this paper is: 0.0335.
-This is significantly different, but results in only a slightly higher accuracy (99.67\% compared to 99.49\%) because the data is very well separated.
+In figure \ref{fig:hist_distance} we can see that the data is very nicely separated (for SigNet128 trained for 20 epochs).
+The ``median'' threshold distance is 0.0335 and the ``leaky'' threshold distance is 0.0402.
+The ``leaky'' threshold is significantly different, but results in the system achieving only a slightly higher accuracy (99.67\% compared to 99.49\%) because the data is very well separated.
 \begin{figure}[h]
     \begin{center}
         \includegraphics[width=0.8\linewidth]{distance_histogram_signet_128.png}
@@ -112,10 +108,6 @@ This is significantly different, but results in only a slightly higher accuracy 
     \caption{Histogram of Distances of Validation Set for SigNet128}
     \label{fig:hist_distances}
 \end{figure}
-
-Can't use LeCun's method because that requires several images of the genuine... (they use 5..)
-More complex thresholds based off of \cite{LeCun} were considered, but were not implemented due to time constraints.
-These are mentioned in section \ref{sec:future_work}.
 
 
 % I should compute the divide as $p_same / (p_same + p_different)$ where each p is computed as the Gaussian distribution of the distances on the training data...

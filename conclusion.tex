@@ -19,6 +19,7 @@ These pathways might allow the FGSM attack to be more effective.
 This seems plausible, especially since dropout is known not to ``confer a significant reduction in a model's vulnerability to adversarial examples''\cite{goodfellow}.
 
 As for the dimensionality of the models, it seems that larger latent vectors are slightly better suited to prediction and slightly worse suited to resistance against adversarial attacks.
+We think that this is because larger latent vectors allow the model to more easily cluster images that are different and also allow FGSM to move the latent vector more freely.
 % mention models sizes here?
 More tests would be needed to collect statistically significant data.
 

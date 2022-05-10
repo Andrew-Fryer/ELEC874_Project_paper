@@ -98,10 +98,6 @@ They hypothesize that the reason that this works is that neural networks are des
 
 They also show that training on adversarial inputs improves the model's accuracy on adversarial inputs (making it less susceptible to the FGSM attack).
 
-``An intriguing aspect of adversarial examples is that an example generated for one model is often
-misclassified by other models, even when they have different architectures or were trained on disjoint training sets''\cite{goodfellow}.
-% The paper also says that adversarial examples generalize to different instances and even different models... (it is really the direction of the pertebation that matters).
-
 If a signature verification system were used (for cheques for example), an attacker could use FGSM without gaining access to the model or probing it.
 If they have access to a similar training set to that used for training the system under attack, they could train their own model and find perturbations using FGSM on their model.
 

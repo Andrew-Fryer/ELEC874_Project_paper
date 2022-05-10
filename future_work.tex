@@ -1,7 +1,7 @@
 \section{Future Work}\label{sec:future_work}
 
 The most surprising conclusion in this paper is that the CEDAR dataset is not useful for evaluating a signature verification system (see section \ref{sec:cedar_flaw}).
-The experiments in this paper could be re-conducted on another dataset to properly evaluate the accuracy of SigNet variations.
+The experiments in this paper could be re-conducted on another dataset to properly evaluate the accuracy of SigNet variations on real-world handwritten signatures.
 It may also be possible to transform the CEDAR dataset so that it is useful for our purposes.
 One approach is to set all pixels values to 0 or 255 using a threshold.
 This would eliminate much of the background noise that is present in the genuine signature images.
@@ -12,28 +12,35 @@ To create more conclusive data, tables \ref{table:1} and \ref{table:2} should be
 As stated in section \ref{sec:conclusion}, the accuracies on normal data are not very statistically significant.
 The models should be re-initialized and trained many times to produce enough accuracies to be sure of the conclusions made about latent vector size.
 
-The FaceNet paper reports impressive accuracy improvements using the triplet loss function.
-It would interesting to see how this would impact the quality of the latent space mapping for SigNet.
+We also have several additional ideas that may be worth pursuing.
 
-Work has already been done in improving network's by training them an adversarial examples created using FGSM and similar methods.
+The FaceNet paper reports impressive accuracy improvements using the triplet loss function.
+It would interesting to see how this would impact the quality of the latent space mapping for SigNet\cite{face_net}.
+
+It is known that an adversarial ``example generated for one model is often misclassified by other models, even when they have different architectures or were trained on disjoint training sets''\cite{goodfellow}.
+It would be interesting to see exactly how effective an FGSM attack is when the gradient is computed on a different instance of SigNet because this would demonstrate the capabilities of an attacker that knows the model architecture and training set, but does not have access to the model's weights or gradients in the model.
+Of course, this should be done on a dataset other CEDAR.
+% The paper also says that adversarial examples generalize to different instances and even different models... (it is really the direction of the pertebation that matters).
+
+% Work has already been done in improving network's robustness by training them on adversarial examples created using FGSM and similar methods\cite{goodfellow}.
 
 There was one area in particular that is interesting, but couldn't be implemented in the alloted time.
 \cite{LeCun} assumes that the cluster of the images of one person's face in the latent space is Gaussian.
 We can easily compute the probability that a Gaussian distribution produces a point.
-Let's call this probability p\_genuine.
+Let's call this probability $p\_genuine$.
 However, computing the probability that a point belongs to the impostor class is tricky.
-In the paper, they average the p\_geuine probabilities for the impostor images for a subject to produce p\_impostor.
-p\_impostor is used to normalize the p\_genuine value of an image.
+In the paper, they average the $p\_geuine$ probabilities for the impostor images for a subject to produce $p\_impostor$.
+The $p\_impostor$ of the subject is used to normalize the $p\_genuine$ value of an image.
 Then a threshold is used on the resulting pseudo-probability.
 (Note that with a threshold of 0.5, something like half of the impostor points would be classified as being genuine when they are completely disjoint.)
 
-They compute a different distribution and threshold for each person using their first 5 images.
-To be consistent with the SigNet paper, this paper uses a one-shot approach, so only one genuine signature is given alongside the signature in question.
+They compute a different distribution and threshold for each person using that person's first 5 images.
+In contrast (to be consistent with the SigNet paper), this paper uses a one-shot approach, so only one genuine signature is given alongside the signature in question.
 Therefore, we cannot compute a distribution for each person.
 Instead, we could compute a distribution for all genuine signatures.
 
-Their approach makes sense, but it may be advantageous to eliminate the need to pick a threshold.
-An alternate way to compute the probability that a point belongs to the impostor class is to make a somewhat crude assumption that the impostor class is also Gaussian.
+Their general approach is intuitive, but it may be advantageous to eliminate the need to pick a threshold.
+An alternate way to compute the probability that a point belongs to the impostor class is to make the somewhat crude assumption that the impostor class is also Gaussian.
 
 The formula for deciding whether or not a point $x$ (difference between latent vectors) should be classified as genuine is given and reduced in figure \ref{proof:gaussian}.
 The $<$ symbol is the computer science ``less than'' comparison operator rather than denoting an inequality, and $g$ is for ``genuine'' and $i$ is for ``impostor''.
@@ -61,7 +68,7 @@ is\_genuine & = P_g > P_i&\\
 \label{proof:gaussian}
 \end{figure}
 
-The assumption the $\Pr(c_g) = \Pr(c_i)$ could be revoked and replaced by a constant ratio of the probabilities and tuned for the system based on the class priors and the desired confidence interval that a pair classified as genuine is in fact genuine.
+The assumption that $\Pr(c_g) = \Pr(c_i)$ could be revoked and replaced by a constant ratio of the probabilities and tuned for the system based on the class priors and the desired confidence interval that a pair classified as genuine is in fact genuine.
 
-This threshold strategy can be implemented efficiently by memoizing the term $2 * (ln(|\Sigma_i|^{-1/2}) - ln(|\Sigma_g|^{-1/2}))$ and by memoizing the latent vectors for all images in the dataset.
+This threshold strategy can be implemented efficiently by pre-computing the term $2 * (ln(|\Sigma_i|^{-1/2}) - ln(|\Sigma_g|^{-1/2}))$ and by memoizing the latent vectors for images in the dataset.
 The latter should result in a large performance improvement because there are many more pairs of images than images in the validation set.
